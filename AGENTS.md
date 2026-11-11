@@ -53,7 +53,7 @@ relative symlinks in `.claude/skills/`. For each new skill, add
 
 ## Astro Lumos Starter contract
 
-Read `docs/motion.md` before modifying behaviour, and `docs/stacki.md` before changing editor integration. New interactions use `.agents/skills/astro-lumos-interaction/SKILL.md`; review/release work uses `.agents/skills/astro-lumos-release/SKILL.md`. These project-local skills are copied into every generated project. `npm run skills:install` in the original starter installs a global new-project entry point.
+Read `docs/motion.md` before modifying behaviour, and `docs/stacki.md` before changing editor integration. New interactions use `.agents/skills/astro-lumos-interaction/SKILL.md`; review/release work uses `.agents/skills/astro-lumos-release/SKILL.md`. These project-local skills are copied into every generated project. The portable astro-lumos-starter skill creates new projects from this repository checkout; it is also the source for the optional global installer. `npm run skills:install` in the original starter installs a global new-project entry point.
 
 - Exactly one `SiteRuntime` in `BaseLayout`; it alone owns Lenis and its GSAP ticker callback. Native touch and anchors remain available; Astro ClientRouter handles internal navigation.
 - Astro ClientRouter is enabled in BaseLayout. Do not add Taxi.js or another router alongside it. Preserve before-swap cleanup and page-load initialization.
@@ -65,7 +65,7 @@ Read `docs/motion.md` before modifying behaviour, and `docs/stacki.md` before ch
 
 ## Upstream maintenance
 
-For framework update work use `.agents/skills/astro-lumos-maintenance/SKILL.md` and `docs/maintenance.md`. Lumos is copied source; the package stamp's commit is the three-way merge baseline. Do not replace the added runtime, modified interaction scripts, brand tokens or local skills during an upstream refresh. Validate candidate upgrades in an isolated local branch/worktree and integrate compatible changes only after checks and visual review pass. The recurring task updates this starter locally; it does not publish or modify client projects.
+For framework update work use `.agents/skills/astro-lumos-maintenance/SKILL.md` and `docs/maintenance.md`. Lumos is copied source; the package stamp's commit is the three-way merge baseline. Do not replace the added runtime, modified interaction scripts, brand tokens or local skills during an upstream refresh. Validate candidate upgrades in an isolated local branch/worktree and integrate compatible changes only after checks and visual review pass. The configured recurring task may commit and push verified starter changes to MadeByKin/astro-lumos-starter main under docs/maintenance.md. It does not deploy or modify client projects. This permission applies only to that original starter, not generated client copies.
 
 For custom continuous effects use `onMotionFrame` from `src/lib/motion/subscriptions.ts` (existing GSAP clock, motion-aware cleanup). For shared viewport updates use `observeViewport`; for scroll animation progress prefer scoped ScrollTrigger. Shift+F toggles a development-only diagnostics panel; do not present its FPS estimate as Lighthouse or field Web Vitals.
 

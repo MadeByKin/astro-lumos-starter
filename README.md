@@ -4,15 +4,24 @@ A reusable static Astro foundation with Lumos components, Lenis, GSAP + ScrollTr
 
 ## Start a client project
 
-Requires Node 22.23.4+ and npm. Use the installed Codex starter skill on this Mac, or the terminal commands below. Each client gets an independent folder and Git repository.
+Requires Node 22.23.4+ and npm. Clone this starter repository and open its folder in Codex to use the included new-project skill, or use the terminal commands below. No global skill installation is required. Each client gets an independent folder and Git repository.
+
+Clone the starter into a location of your choice (GitHub access is required while the repository is private):
+
+```sh
+git clone https://github.com/MadeByKin/astro-lumos-starter.git
+cd astro-lumos-starter
+```
+
+Open this checkout in Codex. If the skill is not listed, restart Codex or explicitly ask it to read `.agents/skills/astro-lumos-starter/SKILL.md`.
 
 ### New-client checklist
 
 - [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
-- [ ] Ask Codex to generate the project with the prompt below. The global starter skill is already installed on Jordan’s Mac and points to `/Users/jordangilroy/build/astro-lumos-starter`.
+- [ ] Open your starter checkout in Codex, then ask it to generate the project with the prompt below. The portable skill lives at `.agents/skills/astro-lumos-starter/SKILL.md` and resolves the source from its own location.
 
   ```text
-  Use $astro-lumos-starter to create /Users/jordangilroy/build/client-name,
+  Use $astro-lumos-starter to create /absolute/path/to/client-name,
   named client-name, with the website URL https://client-domain.com.
   Install dependencies, initialise a separate Git repository, and verify
   the starter works. Follow the copied project instructions and skills.
@@ -76,16 +85,16 @@ The generator copies these files into every client project:
 
 Keep these files in the client repository. Codex discovers repository skills in `.agents/skills` and loads the relevant instructions when a skill is selected or matched to a task; explicit skill prompts make the intended workflow clear. See [official skill guidance](https://learn.chatgpt.com/docs/build-skills).
 
-Client projects are independent copies: weekly maintenance updates the original starter locally, not existing client sites. Review and apply updates to client projects separately.
+Client projects are independent copies: the configured weekly task validates and pushes changes to the maintained GitHub starter, not existing client sites. Cloning the repository does not install a scheduled task on another computer. Review and apply updates to client projects separately.
 
 ### Terminal alternative
 
 From the original starter:
 
 ```sh
-cd /Users/jordangilroy/build/astro-lumos-starter
-npm run new -- /Users/jordangilroy/build/client-name --name=client-name --site=https://client-domain.com
-cd /Users/jordangilroy/build/client-name
+cd /absolute/path/to/astro-lumos-starter
+npm run new -- /absolute/path/to/client-name --name=client-name --site=https://client-domain.com
+cd /absolute/path/to/client-name
 npm ci
 git init
 npm run dev
@@ -97,9 +106,9 @@ The scaffolder copies source, lockfile and project skills without dependencies, 
 
 On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and Codex and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. The repository already exists on this route, so skip the create-repository prompt.
 
-### Installing the starter skill on another Mac
+### Optional global skill installation
 
-Run `npm run skills:install` once from the original starter to install `astro-lumos-starter` in the local Codex skill directory and record this starter’s location. The installer refuses to overwrite an existing skill. Restart Codex if needed. This is a machine-level entry point for creating new projects; the project-level skills are already included in every generated site and need no separate global installation.
+The repository-local skill works directly when this checkout is open in Codex. To invoke it from other folders, run `npm run skills:install` once from your starter checkout to install `astro-lumos-starter` in the local Codex skill directory and record this starter’s location. The installer refuses to overwrite an existing skill. Restart Codex if needed. This is a machine-level entry point for creating new projects; the project-level skills are already included in every generated site and need no separate global installation.
 
 ## Included
 
@@ -149,10 +158,10 @@ The demo uses the original Lumos dark theme and lime brand card; its original sw
 
 Compose ordinary sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Keep custom scripts/styles out of route files. Extract smaller content/card components only for useful markup, styling or interaction boundaries; `index.astro`, `HeroIntro.astro` and `PrincipleCard.astro` are the examples. The old whole-page MotionDemo component is removed. Shared dialog/dropdown behavior is loaded once by site.ts from overlays.ts, with explicit data attributes, native semantics and independent instance state/cleanup.
 
-The canonical source is now this named project workspace. The installed starter skill and weekly maintenance task both point here. Source downloads are written under `outputs/`.
+The canonical source is now this named project workspace. The configured weekly maintenance task keeps the GitHub template in sync after validation. Source downloads are written under `outputs/`.
 
 ## Console timing
 
 Development includes a lightweight Tick-style console utility: `tick.add("checkpoint", true)`, browser timing observations and opt-in frame-gap/function diagnostics. The head marker and module are excluded from production. See [Tick usage and measurement limits](docs/tick.md). The existing Shift+F panel remains available.
 
-The maintained local source is `/Users/jordangilroy/build/astro-lumos-starter`; the installed starter skill and weekly maintenance task point there.
+The repository-local new-project skill works from any checkout location. Optional global installations keep their own local pointer; scheduled maintenance is configured separately.

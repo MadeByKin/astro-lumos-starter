@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Lumos Starter"
+  short_description: "Create a Lumos/Astro site with a reliable motion setup"
+  default_prompt: "Use $astro-lumos-starter to create a new project."

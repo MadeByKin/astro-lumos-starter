@@ -71,3 +71,11 @@ Type check, all three unit/scaffolding tests, static build and both browser suit
 ## Metric deduplication refinement
 
 Removed the automatic startup metric snapshot. Available metrics print once, then only when their formatted value or rating changes; explicit reports share the same cache. Cache state is cleared on session cleanup/reinstall. Type check, unit/scaffolding checks, static build and development browser suite pass. Chromium injected-observation checks verified no placeholders, suppression of hidden precision changes, and both rating-only and displayed-value changes.
+
+## Portable starter skill and verified publication
+
+The canonical new-project skill now lives in `.agents/skills/astro-lumos-starter`, with a relative Claude symlink. It resolves its source from the checkout, or an optional installed pointer, and rejects generated client projects as starter sources. The installer copies this canonical skill. README setup uses clone-local instructions and portable example paths.
+
+All four unit/scaffolding/installer checks pass, including generated skill paths, installed-source equality, local pointer creation and refusal to overwrite existing installations. Both changed skills pass the supplied validator. Astro type checks (70 files, no errors/warnings/hints) and static build pass. No browser runtime or visual changes were made.
+
+The existing Monday 09:00 Europe/London automation is active with explicit authorisation to publish verified starter commits to MadeByKin/astro-lumos-starter main, subject to exact-remote, clean-state, validation and fast-forward checks. This is a local task configuration, not an automation distributed by cloning the repository.
