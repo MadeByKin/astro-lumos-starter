@@ -79,3 +79,9 @@ The canonical new-project skill now lives in `.agents/skills/astro-lumos-starter
 All four unit/scaffolding/installer checks pass, including generated skill paths, installed-source equality, local pointer creation and refusal to overwrite existing installations. Both changed skills pass the supplied validator. Astro type checks (70 files, no errors/warnings/hints) and static build pass. No browser runtime or visual changes were made.
 
 The existing Monday 09:00 Europe/London automation is active with explicit authorisation to publish verified starter commits to MadeByKin/astro-lumos-starter main, subject to exact-remote, clean-state, validation and fast-forward checks. This is a local task configuration, not an automation distributed by cloning the repository.
+
+## Scrolled page-transition regression
+
+Reproduced the apparent scroll-to-top: native scroll reset was already instant, but the named full-height main snapshot animated its group transform from a scrolled negative offset to the incoming top position. Route animations now target the root viewport snapshot, including header/footer, with stable viewport geometry.
+
+Type check, all four unit/scaffolding checks, static build, production browser suite and development browser suite pass. Added a production regression navigating at 600px scroll that verifies incoming scrollY is zero at after-swap, root group keyframes retain the same transform, no page-content group exists, and Back restores the saved scroll position. Existing anchor and reduced-motion checks pass. Visually inspected a paused midpoint of the production slide transition from 650px scroll. Actual installed Studio and other-browser testing were not repeated.

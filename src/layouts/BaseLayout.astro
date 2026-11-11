@@ -18,7 +18,7 @@ type Props = SeoProps & {
    * `paddingTop="navoverlap"` to clear the bar.
    */
   overlap?: boolean;
-  /** Explicit animation for this page's main content. */
+  /** Explicit viewport animation for this page. */
   pageTransition?: "fade" | "slide" | "none";
 };
 
@@ -37,7 +37,12 @@ const animation =
 ---
 
 <!doctype html>
-<html lang="en" class:list={[theme !== "inherit" && `theme-${theme}`]}>
+<html
+  lang="en"
+  class:list={[theme !== "inherit" && `theme-${theme}`]}
+  transition:name="root"
+  transition:animate={animation}
+>
   <head>
     {import.meta.env.DEV && <script is:inline>
       window.__astroLumosHeadAt ??= performance.now();
@@ -50,13 +55,7 @@ const animation =
     <SiteRuntime />
     <SkipLink />
     <Nav overlap={overlap} />
-    <main
-      id="main"
-      tabindex="-1"
-      data-page-transition={pageTransition}
-      transition:name="page-content"
-      transition:animate={animation}
-    >
+    <main id="main" tabindex="-1" data-page-transition={pageTransition}>
       <slot />
     </main>
     <Footer />

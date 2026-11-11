@@ -208,6 +208,66 @@ try {
         requestAnimationFrame(() => requestAnimationFrame(resolve)),
       ),
   );
+  // Navigate from a scrolled position without Playwright scrolling the link into view.
+  await page.evaluate(() => {
+    window.scrollTo({ top: 600, behavior: "instant" });
+    window.__transitionSamples = [];
+    document.addEventListener(
+      "astro:after-swap",
+      () => {
+        window.__transitionScroll = scrollY;
+        requestAnimationFrame(() => {
+          window.__transitionSamples = document
+            .getAnimations()
+            .filter((animation) =>
+              animation.effect?.pseudoElement?.startsWith(
+                "::view-transition-group(",
+              ),
+            )
+            .map((animation) => ({
+              pseudo: animation.effect.pseudoElement,
+              frames: animation.effect
+                .getKeyframes()
+                .map((frame) => frame.transform),
+            }));
+        });
+      },
+      { once: true },
+    );
+  });
+  await page.waitForFunction(() => scrollY >= 500);
+  const savedScroll = await page.evaluate(() => scrollY);
+  await page.evaluate(() => document.querySelector('a[href="/next"]').click());
+  await page.waitForURL("**/next");
+  await page.waitForFunction(() => window.__transitionSamples.length > 0);
+  assert.equal(
+    await page.evaluate(() => window.__transitionScroll),
+    0,
+    "Incoming page starts at the top before presentation",
+  );
+  const groups = await page.evaluate(() => window.__transitionSamples);
+  assert.ok(
+    groups.some((group) => group.pseudo === "::view-transition-group(root)"),
+  );
+  assert.ok(
+    !groups.some((group) => group.pseudo.includes("page-content")),
+    "No scrolled full-height shared content group",
+  );
+  const rootFrames = groups.find(
+    (group) => group.pseudo === "::view-transition-group(root)",
+  ).frames;
+  assert.ok(
+    rootFrames.every((transform) => transform === rootFrames[0]),
+    "Viewport group does not animate the old scroll offset",
+  );
+  await page.goBack();
+  await smooth();
+  await page.waitForFunction(
+    (saved) => Math.abs(scrollY - saved) < 2,
+    savedScroll,
+  );
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await page.waitForFunction(() => scrollY === 0);
   const navigationBaseline = await page.evaluate(() => window.__observers.size);
   for (let visit = 0; visit < 4; visit++) {
     await page.getByRole("link", { name: "Try a page transition" }).click();
