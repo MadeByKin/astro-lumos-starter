@@ -1,0 +1,20 @@
+---
+name: astro-lumos-interaction
+description: Build or modify interactive Astro components in the Astro Lumos starter using its shared Lenis/GSAP runtime, instance cleanup, reduced motion and Stacki editor contract. Use for animations and interactive components in this starter family.
+---
+
+Read AGENTS.md, LUMOS.md and docs/motion.md in this project. Inspect the actual owning component and runtime before changing it. Compose with existing Lumos wrappers, typography, media and button components; keep component-specific scripts/styles in the smallest owning component. Shared reusable animations are the explicit exception: implement them once under src/scripts and target only opt-in data attributes such as data-reveal, never heading tags.
+
+Use src/lib/motion/scope.ts defineBehaviour for instance-owned setup. Dispose listeners via scope.signal, observers via scope.observe, timers/one-shot RAF via scope.timeout/scope.frame, subscriptions via scope.defer. Keep registration idempotent and support disconnect/reconnect, pagehide/pageshow and editor child replacement. Existing semantic Lumos roots sit in display-contents lifecycle hosts; preserve them unless a verified integration requires another strategy.
+
+Import GSAP and ScrollTrigger through src/lib/motion/gsap.ts. Scope animation to the instance with gsap.context and revert it on cleanup and when observeMotion disables motion. Event-created animations must be added to that context too. Explicitly dispose non-GSAP resources. Leave useful HTML visible without animation or JavaScript; avoid global trigger kills and permanent will-change declarations.
+
+SiteRuntime owns the only Lenis instance and GSAP ticker subscription. Do not create per-component Lenis, another RAF loop, Taxi or Webflow data-module bootstrap. Astro ClientRouter is already enabled; preserve astro:before-swap cleanup and incoming/page-load initialization. Dialogs use native focus behavior, data-lenis-prevent for their scrollable content and a paired lockScroll release on close and disposal. Handle concurrent locks.
+
+Use observeMotion for decorative loops and autoplay, responding live to reduced motion, hidden tabs and editor mode. Essential controls remain usable with motion disabled. Read docs/stacki.md when touching editor behavior: trust only verified parent/origin signals, keep the adapter isolated and distinguish source-backed simulation from an actual Studio UI check. Do not promise arbitrary page creation or CMS capabilities.
+
+Validate the behavior you changed in a browser: multiple instances, removal/reinsertion, keyboard/focus, motion preference changes and normal navigation. Run npm run check, npm test and npm run build; run npm run test:browser when runtime or shared interactions change. Provide a working visual preview before marking UI complete. Preserve explicit user choices over these defaults.
+
+For scoped continuous effects, use onMotionFrame from src/lib/motion/subscriptions.ts; it shares the GSAP clock and follows motion policy. For viewport dimensions use observeViewport, which coalesces one shared resize listener. For viewport entry use a scoped IntersectionObserver; for scroll progress prefer ScrollTrigger. Do not add custom loops or another tracking engine merely to match a Webflow file tree. Read docs/federico-comparison.md for capability decisions and docs/astro-basics.md to trace data attributes and the shared reveal script.
+
+Keep page section composition in the route file. Extract a small content/card component only for a meaningful markup, style or behavior boundary; do not wrap several ordinary sections in a convenience demo component. Read astro-lumos-page when composing or restructuring pages. Shared modal/dropdown implementations live once in src/scripts/overlays.ts and use explicit data attributes; preserve per-instance scopes/state, native semantics, focus restoration and concurrent scroll locking. Do not duplicate a custom demo dialog controller when Modal already supplies the needed behavior.

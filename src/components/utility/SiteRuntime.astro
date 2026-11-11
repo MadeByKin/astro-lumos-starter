@@ -1,0 +1,42 @@
+<site-runtime hidden></site-runtime>
+
+<script>
+  import "@/scripts/site";
+</script>
+
+<style is:global>
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto !important;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+    }
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
+    }
+  }
+  html[data-studio-editing="true"],
+  html[data-motion="off"] {
+    scroll-behavior: auto !important;
+  }
+  html[data-studio-editing="true"]::view-transition-group(*),
+  html[data-studio-editing="true"]::view-transition-old(*),
+  html[data-studio-editing="true"]::view-transition-new(*),
+  html[data-motion="off"]::view-transition-group(*),
+  html[data-motion="off"]::view-transition-old(*),
+  html[data-motion="off"]::view-transition-new(*) {
+    animation: none !important;
+  }
+  html[data-studio-editing="true"] *,
+  html[data-motion="off"] * {
+    animation: none !important;
+    transition: none !important;
+  }
+</style>

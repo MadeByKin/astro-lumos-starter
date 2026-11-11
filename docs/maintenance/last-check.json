@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-11T14:01:29.537Z",
+  "baselineVersion": "1.0.3",
+  "baselineCommit": "9eb6523e70e49548a1e29d81ae26a5482fa0b790",
+  "upstreamVersion": "1.0.3",
+  "upstreamCommit": "9eb6523e70e49548a1e29d81ae26a5482fa0b790",
+  "updateAvailable": false,
+  "changed": [],
+  "removed": [],
+  "documentation": "https://lumosframework.com/docs/",
+  "comparison": "https://github.com/lumosframework/lumos-for-astro/compare/9eb6523e70e49548a1e29d81ae26a5482fa0b790...9eb6523e70e49548a1e29d81ae26a5482fa0b790",
+  "scope": "Upstream source check only. Read current docs/release notes and use the maintenance workflow before applying any changes."
+}

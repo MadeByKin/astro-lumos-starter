@@ -1,0 +1,30 @@
+---
+interface Props {
+  /** Set to false to omit this card. */
+  render?: boolean;
+  /** Card title. */
+  title: string;
+  /** Card description. */
+  description: string;
+}
+const { render = true, title, description } = Astro.props;
+---
+
+{render && (
+  <article class="principle_card_wrap" data-reveal="up">
+    <h3 class="principle_card_title">{title}</h3>
+    <p>{description}</p>
+  </article>
+)}
+<style is:global>
+  @layer components {
+    .principle_card_wrap {
+      border-block-start: 1px solid currentColor;
+      padding-block-start: 1.5rem;
+    }
+    .principle_card_title {
+      font-size: 1.5rem;
+      margin-block-end: 1rem;
+    }
+  }
+</style>

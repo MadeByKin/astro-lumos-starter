@@ -1,0 +1,75 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/wrapper/Section.astro";
+import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
+import Grid from "@/components/wrapper/Grid.astro";
+import Heading from "@/components/typography/Heading.astro";
+import Paragraph from "@/components/typography/Paragraph.astro";
+import Img from "@/components/media/Img.astro";
+import Modal from "@/components/interactive/Modal.astro";
+import Button from "@/components/Button.astro";
+import HeroIntro from "@/components/content/HeroIntro.astro";
+import PrincipleCard from "@/components/content/PrincipleCard.astro";
+import lumosBackground from "@/assets/graphics/lumos-background.svg";
+---
+
+<Layout title="Astro Lumos Starter" theme="dark">
+  <Section paddingTop="even" paddingBottom="even">
+    <ContentWrapper variant="card" class="theme-brand" mediaOpacity={100}>
+      <HeroIntro />
+      <Img
+        slot="column2"
+        src={lumosBackground}
+        width={1920}
+        height={1080}
+        loading="eager"
+        fetchPriority="high"
+        alt=""
+      />
+    </ContentWrapper>
+  </Section>
+
+  <Section id="principles" paddingTop="large" paddingBottom="large">
+    <Heading tag="h2" maxWidth={18}>
+      Built to behave well.
+    </Heading>
+    <Grid xsmall={1} medium={3} class="margin-top-8">
+      <PrincipleCard
+        title="One scroll owner"
+        description="Lenis shares GSAP’s ticker. Touch keeps native scrolling. Links, keyboard navigation and history stay native."
+      />
+      <PrincipleCard
+        title="Motion is optional"
+        description="Change your system’s reduced motion setting while this page is open. Enhancements stop and content stays available."
+      />
+      <PrincipleCard
+        title="Instances clean up"
+        description="Each component owns its resources. Removing or replacing it releases its listeners, observers and animations."
+      />
+    </Grid>
+  </Section>
+
+  <Section paddingTop="large" paddingBottom="large">
+    <Heading data-reveal="up" tag="h2" maxWidth={18}>
+      Make it your own.
+    </Heading>
+    <Paragraph maxWidth={52}>
+      Compose pages from the component library. Adjust content through
+      documented props. Keep section composition visible in the page and
+      behaviour in its appropriate shared or component module.
+    </Paragraph>
+    <a href="/example-components">Open the component library →</a>
+    <a href="#main">Back to the beginning ↑</a>
+  </Section>
+
+  <Modal id="demo-dialog" label="Room to focus">
+    <ContentWrapper>
+      <Heading tag="h2">Room to focus.</Heading>
+      <Paragraph>
+        The page behind this dialog is locked. Escape or the close button
+        returns focus to the trigger.
+      </Paragraph>
+      <Button data-modal-close>Close dialog</Button>
+    </ContentWrapper>
+  </Modal>
+</Layout>

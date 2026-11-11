@@ -1,0 +1,82 @@
+---
+import Heading from "@/components/typography/Heading.astro";
+import Paragraph from "@/components/typography/Paragraph.astro";
+interface Props {
+  /** Set to false to omit the content block. */
+  render?: boolean;
+  /** Main title. */
+  title?: string;
+  /** Supporting description. */
+  description?: string;
+}
+const {
+  render = true,
+  title = "A considered starting point.",
+  description = "Smooth scrolling, purposeful motion and an editable component system. A dependable foundation for your next client site.",
+} = Astro.props;
+---
+
+{render && (
+  <div class="hero_intro_wrap">
+    <p class="hero_intro_label">ASTRO LUMOS STARTER</p>
+    <Heading
+      data-reveal="up"
+      data-reveal-distance="0.75"
+      tag="h1"
+      variant="display"
+      maxWidth={14}
+    >
+      {title}
+    </Heading>
+    <Paragraph variant="large" maxWidth={48}>
+      {description}
+    </Paragraph>
+    <div class="hero_intro_actions">
+      <a href="#principles">Explore the foundation ↓</a>
+      <button type="button" data-open-dialog data-modal-open="demo-dialog">
+        Test the dialog
+      </button>
+      <a href="/next">Try a page transition →</a>
+    </div>
+    <p class="hero_intro_status" role="status" data-motion-status>
+      Native scrolling is available.
+    </p>
+  </div>
+)}
+<style is:global>
+  @layer components {
+    .hero_intro_wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(1.75rem, 2.5vw, 2.5rem);
+      width: 100%;
+    }
+    .hero_intro_label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+    }
+    .hero_intro_actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+    .hero_intro_actions button {
+      padding: 0.75rem 1rem;
+      border: 1px solid currentColor;
+      border-radius: 0.25rem;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+    .hero_intro_actions a {
+      text-underline-offset: 0.25em;
+    }
+    .hero_intro_status {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+  }
+</style>

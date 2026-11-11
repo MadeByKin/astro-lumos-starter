@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/wrapper/Section.astro";
+import Heading from "@/components/typography/Heading.astro";
+import Paragraph from "@/components/typography/Paragraph.astro";
+---
+
+<Layout title="Another page" theme="dark" pageTransition="slide">
+  <Section paddingTop="large" paddingBottom="large" fullHeight>
+    <Heading data-reveal="up" tag="h1" variant="display" maxWidth={14}>
+      A new page. A clean start.
+    </Heading>
+    <Paragraph maxWidth={48}>
+      This page uses Astro ClientRouter with an explicit slide transition. The
+      shared reveal script initializes only elements marked with data-reveal.
+    </Paragraph>
+    <a href="/">Return to the demo →</a>
+  </Section>
+</Layout>
