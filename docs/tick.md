@@ -2,6 +2,8 @@
 
 The starter's Tick-style utility is original, lightweight developer tooling inspired by Federico's setup. It is dynamically imported only in development, sends no telemetry and is excluded from the default production build. The existing Shift+F panel remains the single on-screen display.
 
+Console output uses short badges and rounded milliseconds/seconds. LCP candidates and the live CLS session window show green **good**, amber **needs improvement**, or red **poor** using [Google’s thresholds](https://support.google.com/webmasters/answer/9205520): LCP ≤2.5s / ≤4s, CLS ≤0.1 / ≤0.25. Ratings use unrounded values. These describe this development observation, not a site-wide field score. FCP and custom timings have no invented rating. Browser paint/shift observations print updated lines automatically; startup values may still be waiting. Extra timings are in a collapsed group. `getBrowserMetrics()` retains full numeric precision for code.
+
 Run `npm run dev` and open the browser console. Tick logs `diagnostics-ready` and ClientRouter route timing events automatically. In the development console:
 
 ```js

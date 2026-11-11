@@ -61,3 +61,9 @@ The maintained checkout is now `/Users/jordangilroy/build/astro-lumos-starter` (
 - Reviewed the production desktop and narrow-screen captures; original Lumos theme and page composition remain intact.
 
 These are local functional checks, not production performance benchmarks or certification of the installed Stacki editor. Tick's document observations and soft-route durations have separate labels; it makes no isolated eval, INP, Lighthouse TBT/TTI or causal frame-attribution claims.
+
+## Console readability refinement
+
+Tick prints styled badges, rounded units and labelled LCP/CLS threshold ratings. Raw numeric API precision is preserved. Paint/shift observer callbacks coalesce updated console lines, and detailed document timings stay collapsed.
+
+Type check, all three unit/scaffolding tests, static build and both browser suites pass. The development suite checks real paint output, green LCP/CLS styling and readable startup marks. A separate Chromium observer-injection check verified LCP at 2500, 2500.01, 4000 and 4000.01ms, including amber/red styles and classification before rounding. Production assets still exclude the marker and diagnostic labels. These are functional checks; candidate/live ratings are development observations rather than field scores.

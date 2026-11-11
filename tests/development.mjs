@@ -11,6 +11,8 @@ const context = await browser.newContext({ reducedMotion: "no-preference" });
 context.setDefaultTimeout(10000);
 const page = await context.newPage();
 const errors = [];
+const consoleLines = [];
+page.on("console", (message) => consoleLines.push(message.text()));
 page.on("pageerror", (error) => errors.push(error.message));
 try {
   await page.goto(base);
@@ -18,6 +20,30 @@ try {
     document.documentElement.classList.contains("lenis"),
   );
   await page.waitForFunction(() => !!window.tick);
+  await page.waitForFunction(
+    () => window.tick.getBrowserMetrics().lcpCandidateMs !== null,
+  );
+  await page.waitForTimeout(200); // Coalesced observer output, after actual browser paint.
+  assert.ok(
+    consoleLines.some(
+      (line) =>
+        line.includes("%cLCP%c") &&
+        line.includes("(good)") &&
+        line.includes("candidate") &&
+        line.includes("color:#10b981"),
+    ),
+  );
+  assert.ok(
+    consoleLines.some(
+      (line) =>
+        line.includes("%cCLS%c 0.000 (good)") && line.includes("live window"),
+    ),
+  );
+  assert.ok(
+    consoleLines.some(
+      (line) => line.includes("diagnostics-ready%c →") && line.includes("(Δ"),
+    ),
+  );
   const timing = await page.evaluate(() => window.tick.getBrowserMetrics());
   assert.ok(timing.tickModuleStartedMs >= 0);
   assert.ok(timing.headToTickMs !== null && timing.headToTickMs >= 0);
