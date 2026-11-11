@@ -4,18 +4,102 @@ A reusable static Astro foundation with Lumos components, Lenis, GSAP + ScrollTr
 
 ## Start a client project
 
-Requires Node 22.23.4+ and npm. From this starter:
+Requires Node 22.23.4+ and npm. Use the installed Codex starter skill on this Mac, or the terminal commands below. Each client gets an independent folder and Git repository.
+
+### New-client checklist
+
+- [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
+- [ ] Ask Codex to generate the project with the prompt below. The global starter skill is already installed on Jordan’s Mac and points to `/Users/jordangilroy/build/astro-lumos-starter`.
+
+  ```text
+  Use $astro-lumos-starter to create /Users/jordangilroy/build/client-name,
+  named client-name, with the website URL https://client-domain.com.
+  Install dependencies, initialise a separate Git repository, and verify
+  the starter works. Follow the copied project instructions and skills.
+  ```
+
+  Replace the example name, path and URL. If the URL is unknown, omit it; the generated project retains an example origin that must be replaced before launch.
+
+- [ ] In Stacki, choose **Open Existing Project…** and select the generated client folder. Stacki starts the project’s development server. Open this folder rather than creating another blank Astro project. See the [Stacki quick start](https://stacki.build/docs/quick-start/).
+- [ ] Open that **same client folder** as a project in Codex and start a fresh chat there. Use this first prompt:
+
+  ```text
+  Read AGENTS.md and LUMOS.md, and identify the relevant project skills
+  before making changes. Follow this project’s route-level page composition,
+  explicit data-attribute animations, shared Lenis/GSAP runtime, cleanup,
+  reduced-motion, Stacki and validation conventions. Confirm the client
+  checkout before editing and customise this project only.
+  ```
+
+- [ ] Confirm Codex can see the project skills. If they do not appear, restart Codex with the client folder open. Request a specific workflow when useful:
+
+  ```text
+  Use $astro-lumos-page to build the home page from this brief: [brief].
+  Keep ordinary sections in src/pages/index.astro and extract only useful
+  content, styling or interaction boundaries.
+  ```
+
+  ```text
+  Use $astro-lumos-interaction to implement [interaction]. Use an explicit
+  data attribute, the shared runtime and scoped cleanup. Check reduced
+  motion, navigation and removal/reinsertion before calling it complete.
+  ```
+
+- [ ] Set the client’s identity and origin in `src/consts.ts`, replace demo content/assets and configure any required forms or CMS. Review [Before shipping](#before-shipping).
+- [ ] Check the actual page in Stacki’s design and interactive modes, plus a normal browser. Follow [the installed-editor checklist](docs/stacki.md#check-inside-your-installed-editor); automated simulation does not certify the installed editor.
+- [ ] Before review or release, ask:
+
+  ```text
+  Use $astro-lumos-release to validate this client project. Run the required
+  checks, review desktop/mobile and motion behaviour, and provide a working
+  local preview. Report untested integrations and remaining launch setup.
+  ```
+
+- [ ] Create and connect a separate client GitHub repository under the agreed owner. The generator initialises neither Git nor a remote; the setup prompt above asks Codex to initialise local Git. To publish, explicitly ask:
+
+  ```text
+  Create a private GitHub repository named client-name under [owner],
+  connect this client checkout to it, commit the reviewed source and push.
+  Exclude dependencies, build outputs, editor state and secrets.
+  ```
+
+### What keeps Codex consistent
+
+The generator copies these files into every client project:
+
+| File or folder    | Purpose                                                               |
+| ----------------- | --------------------------------------------------------------------- |
+| `AGENTS.md`       | Project-wide instructions and required checks                         |
+| `LUMOS.md`        | Lumos component and styling conventions                               |
+| `.agents/skills/` | Page, interaction, release, maintenance and inherited Lumos workflows |
+| `docs/`           | Motion, Stacki, navigation, Tick and supporting guidance              |
+
+Keep these files in the client repository. Codex discovers repository skills in `.agents/skills` and loads the relevant instructions when a skill is selected or matched to a task; explicit skill prompts make the intended workflow clear. See [official skill guidance](https://learn.chatgpt.com/docs/build-skills).
+
+Client projects are independent copies: weekly maintenance updates the original starter locally, not existing client sites. Review and apply updates to client projects separately.
+
+### Terminal alternative
+
+From the original starter:
 
 ```sh
-npm run new -- /absolute/path/to/client-site --name=client-site --site=https://client.example
-cd /absolute/path/to/client-site
+cd /Users/jordangilroy/build/astro-lumos-starter
+npm run new -- /Users/jordangilroy/build/client-name --name=client-name --site=https://client-domain.com
+cd /Users/jordangilroy/build/client-name
 npm ci
+git init
 npm run dev
 ```
 
-The destination must not exist. The scaffolder copies the source, lockfile and project skills, without dependencies, Git history, editor state or secrets. Keep this starter as your reusable source. Run `npm ci` in this folder only to preview or maintain the starter itself.
+The scaffolder copies source, lockfile and project skills without dependencies, Git history, editor state or secrets. Keep this starter as the reusable source. If Stacki already owns the client dev server, use its URL rather than starting another server unnecessarily.
 
-To make this available in future Codex chats, run `npm run skills:install` once from this original starter. It installs `astro-lumos-starter` in your Codex skill directory and records this starter's location. Restart Codex if needed, then ask: **“Use $astro-lumos-starter to start a site at …”**. The installer refuses to overwrite an existing skill. Project-level page-composition, interaction, release and maintenance skills travel with every generated site.
+### GitHub template alternative
+
+On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and Codex and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. The repository already exists on this route, so skip the create-repository prompt.
+
+### Installing the starter skill on another Mac
+
+Run `npm run skills:install` once from the original starter to install `astro-lumos-starter` in the local Codex skill directory and record this starter’s location. The installer refuses to overwrite an existing skill. Restart Codex if needed. This is a machine-level entry point for creating new projects; the project-level skills are already included in every generated site and need no separate global installation.
 
 ## Included
 
