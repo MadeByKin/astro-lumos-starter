@@ -17,6 +17,52 @@ try {
   await page.waitForFunction(() =>
     document.documentElement.classList.contains("lenis"),
   );
+  await page.waitForFunction(() => !!window.tick);
+  const timing = await page.evaluate(() => window.tick.getBrowserMetrics());
+  assert.ok(timing.tickModuleStartedMs >= 0);
+  assert.ok(timing.headToTickMs !== null && timing.headToTickMs >= 0);
+  const instrumented = await page.evaluate(() => {
+    const object = {
+      value: 5,
+      run: window.tick.instrumentFunction(function (add) {
+        return this.value + add;
+      }, "sum"),
+    };
+    const result = object.run(3);
+    let error;
+    try {
+      window.tick.instrumentFunction(() => {
+        throw new Error("expected");
+      }, "throw")();
+    } catch (value) {
+      error = value.message;
+    }
+    window.tick.startFrameTracking();
+    return { result, error };
+  });
+  assert.deepEqual(instrumented, { result: 8, error: "expected" });
+  await page.waitForFunction(
+    () => window.tick.getAnimationMetrics().sampleCount > 3,
+  );
+  await page.evaluate(() => window.tick.stopFrameTracking());
+  const samples = await page.evaluate(
+    () => window.tick.getAnimationMetrics().sampleCount,
+  );
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  assert.equal(
+    await page.evaluate(() => window.tick.getAnimationMetrics().sampleCount),
+    samples,
+  );
+  await page.getByRole("link", { name: "Try a page transition" }).click();
+  await page.waitForURL("**/next");
+  assert.equal(await page.evaluate(() => typeof window.tick.add), "function");
+  await page.getByRole("link", { name: "Return to the demo" }).click();
+  await page.waitForURL(base + "/");
   await page.keyboard.press("Shift+F");
   await page.locator("[data-motion-diagnostics]").waitFor();
   await page.waitForFunction(() =>
@@ -96,6 +142,8 @@ try {
   );
   await page.keyboard.press("Shift+F");
   assert.equal(await page.locator("[data-motion-diagnostics]").count(), 0);
+  await page.evaluate(() => window.tick.cleanup());
+  assert.equal(await page.evaluate(() => typeof window.tick), "undefined");
   assert.deepEqual(errors, []);
   console.log(
     "PASS: development diagnostics toggle, shared frame clock, live reduced-motion stop/resume and independent viewport subscription disposal.",

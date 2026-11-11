@@ -14,6 +14,10 @@ export function installDiagnostics(scope: Scope) {
     panel = undefined;
   };
   scope.defer(close);
+  document.addEventListener("astro:before-swap", close, {
+    signal: scope.signal,
+  });
+  window.addEventListener("pagehide", close, { signal: scope.signal });
   const toggle = () => {
     if (panel) {
       close();

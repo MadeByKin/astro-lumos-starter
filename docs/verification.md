@@ -42,10 +42,22 @@ Final checks also covered motion-off persistence through router swaps, first cli
 
 ## Page composition and shared controls (1.3.0)
 
-The canonical workspace is now `/Users/jordangilroy/Documents/ChatGPT/Astro Lumos Starter`. Imported the previously verified source from commit a955d1b without copying its Git history, editor state or dependencies. The installed starter pointer and the existing weekly maintenance automation were updated to this workspace; the earlier source remains a historical copy.
+The canonical workspace is now `/Users/jordangilroy/Build/astro-lumos-starter`. Imported the previously verified source from commit a955d1b without copying its Git history, editor state or dependencies. The installed starter pointer and the existing weekly maintenance automation were updated to this workspace; the earlier source remains a historical copy.
 
 Moved all home-page Sections, ContentWrappers and Grid composition into index.astro. Removed the whole-page MotionDemo abstraction. Smaller HeroIntro and PrincipleCard components own their content/style boundaries and have no browser scripts. Replaced the bespoke demo dialog with the existing Modal component. Shared Modal/Dropdown behavior now lives once in src/scripts/overlays.ts, using data attributes and independent instance scopes. Keyboard focus into native details content waits until opening styles paint; scheduled focus is cancelled on removal/navigation.
 
 The browser suite covers the demo dialog, Escape/focus return, concurrent modal locks, removal/reinsertion, dropdown arrow/Escape/outside-click handling after reconnection, repeated ClientRouter navigation, motion preferences, no-JavaScript fallback and the simulated Studio signals. Screenshots use fileURLToPath so workspace names containing spaces are handled correctly. The new page-composition skill and updated project/global guidance were validated with the supplied skill validator.
 
 Final 1.3.0 result: type checks (zero diagnostics), three unit/scaffold checks, the production build, the complete production-browser suite and development diagnostics/subscription checks passed. Desktop and mobile screenshots were reviewed. Installed Studio UI acceptance remains unverified.
+
+## Tick and repository relocation — 1.4.0
+
+The maintained checkout is now `/Users/jordangilroy/build/astro-lumos-starter` (macOS resolves the existing parent as `Build`). The installed new-project skill pointer and Monday maintenance task reference this checkout; the unrelated Plyed folder was left intact.
+
+- Type check: 70 files, zero errors, warnings or hints. All three unit/scaffolding checks pass.
+- Static build passes. Generated production assets contain neither the Tick marker nor diagnostic metric labels; the production browser suite verifies the API/marker are absent.
+- Production browser suite passes for motion, cleanup, ClientRouter, dialogs/focus, mobile, no JavaScript and simulated Studio signals.
+- Development browser suite passes for Tick timing values, function return/this/error preservation, optional frame sampling and stop, route persistence and cleanup, alongside the Shift+F panel, shared clock, live reduced motion and viewport disposal.
+- Reviewed the production desktop and narrow-screen captures; original Lumos theme and page composition remain intact.
+
+These are local functional checks, not production performance benchmarks or certification of the installed Stacki editor. Tick's document observations and soft-route durations have separate labels; it makes no isolated eval, INP, Lighthouse TBT/TTI or causal frame-attribution claims.

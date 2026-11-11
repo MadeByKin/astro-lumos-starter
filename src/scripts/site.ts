@@ -20,11 +20,6 @@ defineBehaviour(
           : "Motion paused · native scrolling";
       });
     });
-    if (import.meta.env.DEV) {
-      import("@/lib/motion/diagnostics").then(({ installDiagnostics }) => {
-        if (!scope.signal.aborted) installDiagnostics(scope);
-      });
-    }
   },
   { refreshOnContent: false },
 );
@@ -44,3 +39,15 @@ document.addEventListener(
   { signal: lifetime.signal },
 );
 if (import.meta.hot) import.meta.hot.dispose(() => lifetime.dispose());
+
+if (import.meta.env.DEV) {
+  Promise.all([
+    import("@/lib/motion/diagnostics"),
+    import("@/utils/tick"),
+  ]).then(([{ installDiagnostics }, { installTick }]) => {
+    if (!lifetime.signal.aborted) {
+      installDiagnostics(lifetime);
+      installTick(lifetime);
+    }
+  });
+}

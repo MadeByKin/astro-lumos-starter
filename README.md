@@ -66,3 +66,9 @@ The demo uses the original Lumos dark theme and lime brand card; its original sw
 Compose ordinary sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Keep custom scripts/styles out of route files. Extract smaller content/card components only for useful markup, styling or interaction boundaries; `index.astro`, `HeroIntro.astro` and `PrincipleCard.astro` are the examples. The old whole-page MotionDemo component is removed. Shared dialog/dropdown behavior is loaded once by site.ts from overlays.ts, with explicit data attributes, native semantics and independent instance state/cleanup.
 
 The canonical source is now this named project workspace. The installed starter skill and weekly maintenance task both point here. Source downloads are written under `outputs/`.
+
+## Console timing
+
+Development includes a lightweight Tick-style console utility: `tick.add("checkpoint", true)`, browser timing observations and opt-in frame-gap/function diagnostics. The head marker and module are excluded from production. See [Tick usage and measurement limits](docs/tick.md). The existing Shift+F panel remains available.
+
+The maintained local source is `/Users/jordangilroy/build/astro-lumos-starter`; the installed starter skill and weekly maintenance task point there.

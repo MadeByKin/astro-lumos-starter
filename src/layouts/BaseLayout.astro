@@ -39,6 +39,9 @@ const animation =
 <!doctype html>
 <html lang="en" class:list={[theme !== "inherit" && `theme-${theme}`]}>
   <head>
+    {import.meta.env.DEV && <script is:inline>
+      window.__astroLumosHeadAt ??= performance.now();
+    </script>}
     <BaseHead {...seo} />
     <ClientRouter />
     <slot name="head" />

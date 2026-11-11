@@ -61,6 +61,12 @@ try {
   await smooth();
   assert.equal(await page.locator("site-runtime").count(), 1);
   assert.equal(
+    await page.evaluate(() => typeof window.tick),
+    "undefined",
+    "Tick is excluded from production",
+  );
+  assert.equal(await page.evaluate(() => window.__astroLumosHeadAt), undefined);
+  assert.equal(
     await page.evaluate(() =>
       getComputedStyle(document.documentElement)
         .getPropertyValue("--brand-500")
