@@ -94,20 +94,21 @@ const badgeStyle =
 const mutedStyle = "color:#888";
 const duration = (ms: number) =>
   ms < 1000 ? `${Math.round(ms)}ms` : `${(ms / 1000).toFixed(2)}s`;
+const displayedMetrics = new Map<string, string>();
 function metricLine(
   label: string,
   value: number | null,
   thresholds?: [number, number],
   note = "",
 ) {
-  const rating =
-    value === null || !thresholds
-      ? ""
-      : value <= thresholds[0]
-        ? "good"
-        : value <= thresholds[1]
-          ? "needs improvement"
-          : "poor";
+  if (value === null) return;
+  const rating = !thresholds
+    ? ""
+    : value <= thresholds[0]
+      ? "good"
+      : value <= thresholds[1]
+        ? "needs improvement"
+        : "poor";
   const color =
     rating === "good"
       ? "#10b981"
@@ -116,14 +117,12 @@ function metricLine(
         : rating === "poor"
           ? "#ef4444"
           : "#888";
-  const formatted =
-    value === null
-      ? "waiting / unavailable"
-      : label === "CLS"
-        ? value.toFixed(3)
-        : duration(value);
+  const formatted = label === "CLS" ? value.toFixed(3) : duration(value);
+  const message = `%c${label}%c ${formatted}${rating ? ` (${rating})` : ""}%c${note ? ` · ${note}` : ""}`;
+  if (displayedMetrics.get(label) === message) return;
+  displayedMetrics.set(label, message);
   console.info(
-    `%c${label}%c ${formatted}${rating ? ` (${rating})` : ""}%c${note ? ` · ${note}` : ""}`,
+    message,
     badgeStyle,
     `color:${color};font-weight:600`,
     mutedStyle,
@@ -265,6 +264,7 @@ declare global {
 export function installTick(owner: Scope) {
   if (!ENABLE_TICK_LOGGING || owner.signal.aborted) return;
   tick.cleanup();
+  displayedMetrics.clear();
   clsStart = 0;
   clsLast = 0;
   clsValue = 0;
@@ -291,8 +291,8 @@ export function installTick(owner: Scope) {
     measures.length = 0;
     frameTimes.length = 0;
     gaps.length = 0;
+    displayedMetrics.clear();
   });
-  const reported = new Map<string, number>();
   let reportPending = false;
   const reportPaintMetrics = () => {
     if (reportPending) return;
@@ -311,10 +311,7 @@ export function installTick(owner: Scope) {
         ["FCP", metrics.fcpMs, undefined, ""],
       ];
       for (const [name, value, thresholds, note] of readings) {
-        if (value !== null && reported.get(name) !== value) {
-          reported.set(name, value);
-          metricLine(name, value, thresholds, note);
-        }
+        metricLine(name, value, thresholds, note);
       }
     }, 150);
   };
@@ -430,5 +427,5 @@ export function installTick(owner: Scope) {
     },
     { signal: session.signal },
   );
-  tick.add("diagnostics-ready", true);
+  tick.add("diagnostics-ready");
 }

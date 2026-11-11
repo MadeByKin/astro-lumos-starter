@@ -44,6 +44,18 @@ try {
       (line) => line.includes("diagnostics-ready%c →") && line.includes("(Δ"),
     ),
   );
+  assert.ok(
+    !consoleLines.some((line) => /%c(?:LCP|CLS|FCP)%c.*waiting/.test(line)),
+  );
+  const lcpLines = () =>
+    consoleLines.filter((line) => line.includes("%cLCP%c"));
+  const countBeforeSnapshot = lcpLines().length;
+  await page.evaluate(() => window.tick.showBrowserMetrics());
+  assert.equal(
+    lcpLines().length,
+    countBeforeSnapshot,
+    "explicit snapshot does not repeat unchanged metrics",
+  );
   const timing = await page.evaluate(() => window.tick.getBrowserMetrics());
   assert.ok(timing.tickModuleStartedMs >= 0);
   assert.ok(timing.headToTickMs !== null && timing.headToTickMs >= 0);

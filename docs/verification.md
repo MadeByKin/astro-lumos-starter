@@ -67,3 +67,7 @@ These are local functional checks, not production performance benchmarks or cert
 Tick prints styled badges, rounded units and labelled LCP/CLS threshold ratings. Raw numeric API precision is preserved. Paint/shift observer callbacks coalesce updated console lines, and detailed document timings stay collapsed.
 
 Type check, all three unit/scaffolding tests, static build and both browser suites pass. The development suite checks real paint output, green LCP/CLS styling and readable startup marks. A separate Chromium observer-injection check verified LCP at 2500, 2500.01, 4000 and 4000.01ms, including amber/red styles and classification before rounding. Production assets still exclude the marker and diagnostic labels. These are functional checks; candidate/live ratings are development observations rather than field scores.
+
+## Metric deduplication refinement
+
+Removed the automatic startup metric snapshot. Available metrics print once, then only when their formatted value or rating changes; explicit reports share the same cache. Cache state is cleared on session cleanup/reinstall. Type check, unit/scaffolding checks, static build and development browser suite pass. Chromium injected-observation checks verified no placeholders, suppression of hidden precision changes, and both rating-only and displayed-value changes.
