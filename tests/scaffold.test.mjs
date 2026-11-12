@@ -77,45 +77,60 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
   }
 });
 
-test("optional installer copies the portable repository skill and preserves existing installs", async () => {
-  const folder = await mkdtemp(path.join(os.tmpdir(), "starter-skill-check-"));
-  const script = fileURLToPath(
-    new URL("../scripts/install-skill.mjs", import.meta.url),
-  );
-  const source = fileURLToPath(new URL("..", import.meta.url));
-  const destination = path.join(folder, "skills/astro-lumos-starter");
-  const run = () =>
-    spawnSync(process.execPath, [script], {
-      encoding: "utf8",
-      env: { ...process.env, CODEX_HOME: folder },
-    });
-  try {
-    const result = run();
-    assert.equal(result.status, 0, result.stderr);
-    const installed = await readFile(
-      path.join(destination, "SKILL.md"),
-      "utf8",
+for (const tool of ["codex", "claude"]) {
+  test(`${tool} installer copies the shared skill and preserves existing installs`, async () => {
+    const folder = await mkdtemp(
+      path.join(os.tmpdir(), "starter-skill-check-"),
     );
-    assert.equal(
-      installed,
-      await readFile(
-        path.join(source, ".agents/skills/astro-lumos-starter/SKILL.md"),
+    const script = fileURLToPath(
+      new URL("../scripts/install-skill.mjs", import.meta.url),
+    );
+    const source = fileURLToPath(new URL("..", import.meta.url));
+    const config = path.join(folder, tool);
+    const destination = path.join(config, "skills/astro-lumos-starter");
+    const run = (...args) =>
+      spawnSync(process.execPath, [script, ...args], {
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          CODEX_HOME: path.join(folder, "codex"),
+          CLAUDE_CONFIG_DIR: path.join(folder, "claude"),
+        },
+      });
+    try {
+      assert.notEqual(run("--tool=unknown").status, 0);
+      await assert.rejects(access(config));
+      // Keep the no-option Codex entry point covered for existing users.
+      const result = tool === "codex" ? run() : run("--tool=claude");
+      assert.equal(result.status, 0, result.stderr);
+      const installed = await readFile(
+        path.join(destination, "SKILL.md"),
         "utf8",
-      ),
-    );
-    assert.equal(
-      JSON.parse(await readFile(path.join(destination, "starter.json"), "utf8"))
-        .starter,
-      source,
-    );
-    await access(path.join(destination, "agents/openai.yaml"));
-    await writeFile(path.join(destination, "keep.txt"), "preserve me");
-    assert.notEqual(run().status, 0);
-    assert.equal(
-      await readFile(path.join(destination, "keep.txt"), "utf8"),
-      "preserve me",
-    );
-  } finally {
-    await rm(folder, { recursive: true, force: true });
-  }
-});
+      );
+      assert.equal(
+        installed,
+        await readFile(
+          path.join(source, ".agents/skills/astro-lumos-starter/SKILL.md"),
+          "utf8",
+        ),
+      );
+      assert.equal(
+        JSON.parse(
+          await readFile(path.join(destination, "starter.json"), "utf8"),
+        ).starter,
+        source,
+      );
+      await access(path.join(destination, "agents/openai.yaml"));
+      await writeFile(path.join(destination, "keep.txt"), "preserve me");
+      assert.notEqual(run(`--tool=${tool}`).status, 0);
+      assert.equal(
+        await readFile(path.join(destination, "keep.txt"), "utf8"),
+        "preserve me",
+      );
+      const other = tool === "codex" ? "claude" : "codex";
+      await assert.rejects(access(path.join(folder, other)));
+    } finally {
+      await rm(folder, { recursive: true, force: true });
+    }
+  });
+}

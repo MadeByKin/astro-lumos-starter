@@ -53,7 +53,7 @@ relative symlinks in `.claude/skills/`. For each new skill, add
 
 ## Astro Lumos Starter contract
 
-Read `docs/motion.md` before modifying behaviour, and `docs/stacki.md` before changing editor integration. New interactions use `.agents/skills/astro-lumos-interaction/SKILL.md`; review/release work uses `.agents/skills/astro-lumos-release/SKILL.md`. These project-local skills are copied into every generated project. The portable astro-lumos-starter skill creates new projects from this repository checkout; it is also the source for the optional global installer. `npm run skills:install` in the original starter installs a global new-project entry point.
+Read `docs/motion.md` before modifying behaviour, and `docs/stacki.md` before changing editor integration. New interactions use `.agents/skills/astro-lumos-interaction/SKILL.md`; review/release work uses `.agents/skills/astro-lumos-release/SKILL.md`. These project-local skills are copied into every generated project. The portable astro-lumos-starter skill creates new projects from this repository checkout; it is also the source for the optional global installer. The optional user-level new-project installer supports `npm run skills:install -- --tool=codex` and `npm run skills:install -- --tool=claude`.
 
 - Exactly one `SiteRuntime` in `BaseLayout`; it alone owns Lenis and its GSAP ticker callback. Native touch and anchors remain available; Astro ClientRouter handles internal navigation.
 - Use the Astro ClientRouter configured in BaseLayout for navigation. Preserve before-swap cleanup and page-load initialization.

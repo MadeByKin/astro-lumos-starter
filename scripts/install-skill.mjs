@@ -3,13 +3,23 @@ import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 
+const options = process.argv.slice(2);
+if (
+  options.length > 1 ||
+  (options.length === 1 && !/^--tool=(codex|claude)$/.test(options[0]))
+) {
+  throw new Error("Usage: npm run skills:install -- --tool=codex|claude");
+}
+const tool = options[0]?.slice(7) || "codex";
+const configDirectory =
+  tool === "claude"
+    ? process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude")
+    : process.env.CODEX_HOME || path.join(os.homedir(), ".codex");
+const toolName = tool === "claude" ? "Claude Code" : "Codex";
+
 const starter = fileURLToPath(new URL("..", import.meta.url));
 const source = path.join(starter, ".agents/skills/astro-lumos-starter");
-const destination = path.join(
-  process.env.CODEX_HOME || path.join(os.homedir(), ".codex"),
-  "skills",
-  "astro-lumos-starter",
-);
+const destination = path.join(configDirectory, "skills", "astro-lumos-starter");
 try {
   await access(destination);
   throw new Error(
@@ -33,5 +43,5 @@ await writeFile(
   JSON.stringify({ starter }, null, 2) + "\n",
 );
 console.log(
-  `Installed ${destination}\nRestart Codex if the skill is not listed. Keep the starter at ${starter}`,
+  `Installed ${destination}\nRestart ${toolName} if the skill is not listed. Keep the starter at ${starter}`,
 );

@@ -2,7 +2,7 @@
 
 An Astro starter with Lumos components, Lenis smooth scrolling, GSAP animations, page transitions and Stacki editing support. Includes project instructions and skills for Codex and Claude Code.
 
-## Start a client project
+## Start a project
 
 Requires Node 22.23.4+ and npm. Each client project gets its own folder and Git repository.
 
@@ -15,7 +15,7 @@ cd astro-lumos-starter
 
 Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill-name …` in Codex or `/skill-name …` in Claude Code. Both use the same repository skills. If a skill is missing, restart your tool or ask it to read the corresponding `.agents/skills/<name>/SKILL.md`.
 
-### New-client checklist
+### New Project Checklist
 
 - [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
 - [ ] From the starter checkout, ask your assistant to generate a client project:
@@ -30,47 +30,16 @@ Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill
   Replace the example name, path and URL. If the URL is unknown, omit it; the generated project retains an example origin that must be replaced before launch.
 
 - [ ] In Stacki, choose **Open Existing Project…** and select the generated client folder. Stacki starts the project’s development server. Open this folder rather than creating another blank Astro project. See the [Stacki quick start](https://stacki.build/docs/quick-start/).
-- [ ] Open that **same client folder** in Codex or Claude Code and start a fresh chat there. Use this first prompt:
+- [ ] Open that **same project folder** in Codex or Claude Code and start a fresh chat. Ask it to read `AGENTS.md` and `LUMOS.md` before making changes.
 
-  ```text
-  Read AGENTS.md and LUMOS.md, and identify the relevant project skills
-  before making changes. Follow this project’s route-level page composition,
-  explicit data-attribute animations, shared Lenis/GSAP runtime, cleanup,
-  reduced-motion, Stacki and validation conventions. Confirm the client
-  checkout before editing and customise this project only.
-  ```
+### Example interaction prompt
 
-- [ ] Use the project skills as you build:
+```text
+Use $astro-lumos-interaction to implement an image gallery where selecting
+a thumbnail updates the main image with a short crossfade.
+```
 
-  ```text
-  Use $astro-lumos-page to build the home page from this brief: [brief].
-  Keep ordinary sections in src/pages/index.astro and extract only useful
-  content, styling or interaction boundaries.
-  ```
-
-  ```text
-  Use $astro-lumos-interaction to implement [interaction]. Use an explicit
-  data attribute, the shared runtime and scoped cleanup. Check reduced
-  motion, navigation and removal/reinsertion before calling it complete.
-  ```
-
-- [ ] Set the client’s identity and origin in `src/consts.ts`, replace demo content/assets and configure any required forms or CMS. Review [Before shipping](#before-shipping).
-- [ ] Review the site in a browser and follow the [Stacki editor checklist](docs/stacki.md#check-inside-your-installed-editor).
-- [ ] Before review or release, ask:
-
-  ```text
-  Use $astro-lumos-release to validate this client project. Run the required
-  checks, review desktop/mobile and motion behaviour, and provide a working
-  local preview. Report untested integrations and remaining launch setup.
-  ```
-
-- [ ] Create a client GitHub repository under the agreed owner. The setup prompt initialises local Git; publishing is a separate step:
-
-  ```text
-  Create a private GitHub repository named client-name under [owner],
-  connect this client checkout to it, commit the reviewed source and push.
-  Exclude dependencies, build outputs, editor state and secrets.
-  ```
+Describe the interaction or attach reference screenshots. The skill handles the implementation conventions and practical browser checks. In Claude Code, use `/astro-lumos-interaction` followed by the same request.
 
 ### What keeps Codex and Claude Code consistent
 
@@ -105,15 +74,25 @@ The generator copies source, lockfile and skills into a fresh folder, excluding 
 
 ### GitHub template alternative
 
-On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. The repository already exists on this route, so skip the create-repository prompt.
+On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. This route creates the project repository directly.
 
-### Optional global Codex skill installation
+### Optional global skill installation
 
-To invoke the new-project skill from other folders in Codex, run `npm run skills:install` from this checkout. It installs a local pointer to the starter and preserves existing installations. Repository skills work directly in Codex and Claude Code without this step.
+Repository skills work directly in Codex and Claude Code. To use the new-project skill from other folders, run the command for your tool from the starter checkout:
+
+```sh
+# Codex
+npm run skills:install -- --tool=codex
+
+# Claude Code
+npm run skills:install -- --tool=claude
+```
+
+The installer copies the skill to your tool’s user-level skills folder and records this checkout’s location. It preserves existing installations. Keep the starter in that location, and restart your tool if the skill is not listed. Running `npm run skills:install` without an option defaults to Codex.
 
 ## Included
 
-- Lumos components, original dark/lime theme and page-building skills.
+- Lumos components and page-building skills.
 - Lenis smooth scrolling with a shared GSAP clock and native touch/anchor navigation.
 - Data-attribute animations, scoped cleanup and live reduced-motion support.
 - Astro ClientRouter with fade, slide and disabled-animation options.
@@ -160,36 +139,23 @@ Keep page transitions on the root viewport (`transition:name="root"`) so navigat
 
 ### Example prompts for Codex and Claude Code
 
-Use these in the client project checkout. Codex can use `Use $astro-lumos-interaction` before either prompt; in Claude Code, invoke `/astro-lumos-interaction` followed by the same instructions.
+Use these in the project checkout. In Claude Code, replace `Use $astro-lumos-interaction` with `/astro-lumos-interaction`.
 
 **Change the default transition:**
 
 ```text
-Change this site's default page transition from fade to slide in
-src/layouts/BaseLayout.astro. Keep existing explicit page overrides.
-Keep the animation on the root viewport, preserve ClientRouter history
-and anchor scrolling, and respect reduced motion. Update the docs and
-verify navigation from the top and part way down a page, plus Back/Forward.
-Provide a local preview before calling it complete.
+Use $astro-lumos-interaction to change this site's default page transition
+from fade to slide. Keep existing page overrides.
 ```
 
-To apply one effect everywhere, replace “Keep existing explicit page overrides” with “Remove explicit pageTransition overrides so every page inherits the new default.”
+To apply one effect everywhere, replace “Keep existing page overrides” with “Make every page use the new default.”
 
 **Create a custom transition for one page:**
 
 ```text
-Create a custom transition for /about: a short fade combined with a
-subtle upward entrance, lasting 0.35s. Keep the current default on all
-other pages. Extend BaseLayout's typed pageTransition options and the
-animation mapping, then opt /about into the new transition. Define both
-leave and enter effects deliberately, including navigation back out of
-/about; the two snapshots can use different page settings.
-
-Use Astro ClientRouter and its supported animation/lifecycle APIs. Keep
-page-wide animation on the root viewport, use data attributes for any
-additional shared element effects, and preserve cleanup, instant route
-scroll positioning, history/anchors and reduced motion. Update the docs,
-run the relevant checks, and provide a local preview for review.
+Use $astro-lumos-interaction to create a custom transition for /about:
+a short fade with a subtle upward entrance lasting 0.35s. Keep the
+current default on all other pages.
 ```
 
 Replace `/about` and the motion description as needed. Custom transition values require an implementation in the layout; the built-in values are `fade`, `slide` and `none`.
