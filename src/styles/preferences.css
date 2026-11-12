@@ -1,0 +1,24 @@
+/* Scrollbar defaults */
+
+:root {
+  --scrollbar-width: none;
+  --scrollbar-display: none;
+}
+
+[data-scrollbars="visible"] {
+  --scrollbar-width: auto;
+  --scrollbar-display: block;
+}
+
+[data-scrollbars="hidden"] {
+  --scrollbar-width: none;
+  --scrollbar-display: none;
+}
+
+:where(*) {
+  scrollbar-width: var(--scrollbar-width);
+}
+
+:where(*)::-webkit-scrollbar {
+  display: var(--scrollbar-display);
+}

@@ -165,3 +165,9 @@ The canonical source is now this named project workspace. The configured weekly 
 Development includes a lightweight Tick-style console utility: `tick.add("checkpoint", true)`, browser timing observations and opt-in frame-gap/function diagnostics. The head marker and module are excluded from production. See [Tick usage and measurement limits](docs/tick.md). The existing Shift+F panel remains available.
 
 The repository-local new-project skill works from any checkout location. Optional global installations keep their own local pointer; scheduled maintenance is configured separately.
+
+## Scrollbar defaults
+
+Scrollbars are hidden by default for the page and nested scroll containers. Scrolling, keyboard controls and native touch remain enabled; these styles do not set overflow or change Lenis. The shared rules live in `src/styles/preferences.css`.
+
+To show native scrollbars throughout a site, add `data-scrollbars="visible"` to the `<html>` element in `src/layouts/BaseLayout.astro`. To show them only in a scrolling panel, add the attribute to that container instead. The preference applies to its descendants too; a nested `data-scrollbars="hidden"` can opt back out. Browser/system settings still determine native scrollbar appearance.
