@@ -1,14 +1,16 @@
-# Tick: local console timing and frame diagnostics
+# Tick diagnostics
 
-The starter's Tick-style utility is original, lightweight developer tooling inspired by Federico's setup. It is dynamically imported only in development, sends no telemetry and is excluded from the default production build. The existing Shift+F panel remains the single on-screen display.
+Tick is development-only console tooling. Open the browser console after `npm run dev`, or press **Shift+F** for the FPS panel. Diagnostic modules are excluded from production and send no telemetry.
 
-Console output uses short badges and rounded milliseconds/seconds. LCP candidates and the live CLS session window show green **good**, amber **needs improvement**, or red **poor** using [Google’s thresholds](https://support.google.com/webmasters/answer/9205520): LCP ≤2.5s / ≤4s, CLS ≤0.1 / ≤0.25. Ratings use unrounded values. These describe this development observation, not a site-wide field score. FCP and custom timings have no invented rating. Browser paint/shift observations print the first available reading automatically, with no startup metric snapshot or placeholders. Further lines print only when the displayed value or rating changes; changes hidden by rounding are silent. Explicit metric reports share this deduplication. Extra timings are in a collapsed group. `getBrowserMetrics()` retains full numeric precision for code.
+LCP candidates and live CLS readings use coloured badges and [Google’s thresholds](https://support.google.com/webmasters/answer/9205520): LCP ≤2.5s / ≤4s; CLS ≤0.1 / ≤0.25. Ratings use unrounded values; console values are rounded. Readings print when available and update when the displayed value or rating changes. Additional timings are collapsed; `getBrowserMetrics()` keeps full precision.
 
-Run `npm run dev` and open the browser console. Tick logs `diagnostics-ready` and ClientRouter route timing events automatically. In the development console:
+## Usage
+
+Tick logs startup and route events automatically. In the browser console:
 
 ```js
 tick.add("app-ready");
-tick.add("checkpoint", true); // Include the browser-metric table.
+tick.add("checkpoint", true); // Include metrics and timing details.
 tick.showBrowserMetrics();
 tick.enableFrameDropDetection(true); // Starts optional sampling, target 60fps.
 tick.showAnimationMetrics();
@@ -27,26 +29,27 @@ if (import.meta.env.DEV) {
 
 `tick.instrumentFunction(fn, 'name')` returns a wrapper that preserves `this`, arguments, return values and thrown errors. It records the synchronous invocation as a native Performance measure. For an async function, that does **not** measure all awaited work or CPU usage. Only explicitly wrapped functions are instrumented; no automatic patching of application objects occurs.
 
-## What the readings mean
+## Readings
 
-- `tickModuleStartedMs`: navigation-relative time when the diagnostics module executes.
-- `headToTickMs`: interval from the development head marker to module execution. This includes intervening parsing, loading, dependency ordering, scheduling and execution. It is **not isolated JavaScript evaluation time**. The marker is guarded so soft navigation does not reset it.
-- `domReadyMs` / `ttfbMs`: document Navigation Timing values, when available.
-- `fcpMs`: browser First Contentful Paint entry.
-- `lcpCandidateMs`: latest observed Largest Contentful Paint candidate, not a promise that the final value is available at startup.
-- `clsSessionWindow`: largest observed layout-shift session window, excluding recent-input shifts, with a one-second gap and five-second window. This local document observation is not a complete field Web Vitals report across all browser lifecycle cases.
-- `observedLongTasks` / `observedBlockingMs`: supported Long Tasks observations and accumulated duration beyond 50ms. The latter is **not Lighthouse TBT**: it has a different observation window.
-- FPS/frame gaps: samples of the existing GSAP clock using wall time. Frame gaps and estimated drops are relative to a configured target (default 60fps). They are not a direct GPU/display measurement.
-- Nearby measures on a slow gap are correlated work, not proof that a particular function caused the gap. Use DevTools traces to establish the cause.
+| Field                                      | Meaning                                                                                                             |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `tickModuleStartedMs`                      | Time from document navigation to Tick module execution.                                                             |
+| `headToTickMs`                             | Head marker → module execution, including loading, parsing, dependency order and scheduling.                        |
+| `domReadyMs` / `ttfbMs`                    | Document Navigation Timing values.                                                                                  |
+| `fcpMs`                                    | Browser First Contentful Paint.                                                                                     |
+| `lcpCandidateMs`                           | Latest observed Largest Contentful Paint candidate.                                                                 |
+| `clsSessionWindow`                         | Largest observed layout-shift session window, excluding recent-input shifts; one-second gap and five-second window. |
+| `observedLongTasks` / `observedBlockingMs` | Long-task count and accumulated duration beyond 50ms.                                                               |
+| FPS / frame gaps                           | Wall-time samples of the GSAP clock against a target rate, 60fps by default.                                        |
 
-Unsupported or not-yet-observed values are `null`, not fabricated zeros or passing scores. FID/TTI and invented smoothness/Lighthouse scores are not reported. INP requires a proper implementation such as Google's web-vitals library; this tool does not approximate it under that name.
+Unavailable readings are `null`. Paint/layout readings remain document-scoped across ClientRouter navigation; route durations are logged separately.
 
-## Lifetime and overhead
+These are local development observations. Head-to-module time is not isolated JS evaluation, observed blocking uses a different window from Lighthouse TBT, and frame gaps are estimates rather than GPU measurements. Nearby function measures show correlation; use DevTools traces to identify causes. For production assessment use Lighthouse and field data collected with a library such as [web-vitals](https://github.com/GoogleChrome/web-vitals).
 
-Tick installs one document-level set of observers and router listeners. Document paint/timing readings stay document-scoped across ClientRouter transitions; route start/ready durations are reported separately rather than pretending every soft navigation is a fresh document load. Buffers are bounded (120 frame samples, 60 gaps, 100 measures).
+## Cleanup and sampling
 
-Frame sampling is opt-in and shares GSAP's clock; it adds no independent RAF loop. It pauses with the shared motion/visibility policy and discards the pause interval. `stopFrameTracking()` removes that subscription. `cleanup()` disconnects Tick's observers/listeners, stops sampling, clears its own measures and removes/restores its console global; refreshing starts a fresh session. Site hot-disposal also cleans it up. The existing Shift+F panel has its own independently disposable sampling scope.
+Frame sampling is opt-in on the shared GSAP clock. It pauses with motion/visibility policy and discards paused intervals. `stopFrameTracking()` removes the subscription. Buffers are bounded to 120 frame samples, 60 gaps and 100 measures.
 
-Development timings include Vite/HMR overhead and should not be presented as client production results. For production assessment, use Lighthouse and correctly collected field data.
+`cleanup()` disconnects observers/listeners, stops sampling, clears Tick’s measures and restores/removes its console global. Hot disposal also cleans up; refreshing starts a new session. The Shift+F panel owns an independently disposable sampling scope.
 
-Sources: [Google's current web-vitals library](https://github.com/GoogleChrome/web-vitals), [TBT measurement](https://web.dev/articles/tbt), [TTI retirement](https://developer.chrome.com/docs/lighthouse/performance/interactive/).
+References: [Web Vitals](https://github.com/GoogleChrome/web-vitals), [TBT measurement](https://web.dev/articles/tbt).

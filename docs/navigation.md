@@ -1,10 +1,10 @@
 # Astro ClientRouter transitions
 
-The starter now enables `<ClientRouter />` in BaseLayout at the user's request. It intercepts internal navigation and swaps page content in the same document. React is not required. Standard full navigation remains available without JavaScript or with `data-astro-reload` on a link.
+`BaseLayout.astro` includes `<ClientRouter />`. It intercepts internal navigation and swaps page content in the same document. Standard full navigation remains available without JavaScript or with `data-astro-reload` on a link.
 
-BaseLayout accepts `pageTransition="fade" | "slide" | "none"`. The home page uses a short fade and `/next` demonstrates a slide. The animation directive is on the root `<html>` element so Astro animates viewport snapshots. Do not name the full-height `<main>` as a shared transition element: its scrolled bounding box can animate back toward the top even though native scrolling already reset instantly. The viewport transition includes the header and footer. Reduced motion disables decorative transition animation. Do not add Taxi or another router alongside ClientRouter.
+BaseLayout accepts `pageTransition="fade" | "slide" | "none"`. The home page uses a short fade and `/next` demonstrates a slide. The animation directive is on the root `<html>` element so Astro animates viewport snapshots. Do not name the full-height `<main>` as a shared transition element: its scrolled bounding box can animate back toward the top even though native scrolling already reset instantly. The viewport transition includes the header and footer. Reduced motion disables decorative transition animation.
 
-This supports more elaborate project-specific transitions: named shared elements, persistent media/state, route-specific animation pairs and lifecycle hooks. An asynchronous GSAP leave/enter sequence still needs a deliberate implementation using Astro's supported preparation/swap lifecycle; adding ClientRouter alone does not choreograph one automatically.
+Custom transitions can use named shared elements, persistent media, route-specific animation pairs and preparation/swap hooks. Implement asynchronous GSAP leave/enter sequences through these lifecycle hooks. See the [README examples](../README.md#page-transitions) for configuration and assistant prompts.
 
 ## Runtime contract
 

@@ -1,10 +1,10 @@
 # Astro Lumos Starter
 
-A reusable static Astro foundation with Lumos components, Lenis, GSAP + ScrollTrigger, scoped cleanup, attribute-driven sitewide effects, live reduced-motion handling and an isolated Stacki Studio adapter.
+An Astro starter with Lumos components, Lenis smooth scrolling, GSAP animations, page transitions and Stacki editing support. Includes project instructions and skills for Codex and Claude Code.
 
 ## Start a client project
 
-Requires Node 22.23.4+ and npm. Clone this starter repository and open its folder in Codex or Claude Code to use the included new-project skill, or use the terminal commands below. No global skill installation is required. Each client gets an independent folder and Git repository.
+Requires Node 22.23.4+ and npm. Each client project gets its own folder and Git repository.
 
 Clone the starter into a location of your choice:
 
@@ -13,14 +13,12 @@ git clone https://github.com/MadeByKin/astro-lumos-starter.git
 cd astro-lumos-starter
 ```
 
-Open this checkout in Codex or Claude Code. Codex uses `$astro-lumos-starter`; Claude Code uses `/astro-lumos-starter`. If the skill is not listed, restart your tool or explicitly ask it to read `.agents/skills/astro-lumos-starter/SKILL.md`.
-
-For the prompts below, use `$skill-name` in Codex or `/skill-name` in Claude Code. For example, replace `Use $astro-lumos-starter to create …` with `/astro-lumos-starter Create …` in Claude Code. The plain-language instructions work in either tool.
+Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill-name …` in Codex or `/skill-name …` in Claude Code. Both use the same repository skills. If a skill is missing, restart your tool or ask it to read the corresponding `.agents/skills/<name>/SKILL.md`.
 
 ### New-client checklist
 
 - [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
-- [ ] Open your starter checkout in Codex or Claude Code, then ask it to generate the project with the prompt below. The portable skill lives at `.agents/skills/astro-lumos-starter/SKILL.md` and resolves the source from its own location.
+- [ ] From the starter checkout, ask your assistant to generate a client project:
 
   ```text
   Use $astro-lumos-starter to create /absolute/path/to/client-name,
@@ -42,7 +40,7 @@ For the prompts below, use `$skill-name` in Codex or `/skill-name` in Claude Cod
   checkout before editing and customise this project only.
   ```
 
-- [ ] Confirm your tool can see the project skills. If they do not appear, restart it with the client folder open. Request a specific workflow when useful:
+- [ ] Use the project skills as you build:
 
   ```text
   Use $astro-lumos-page to build the home page from this brief: [brief].
@@ -57,7 +55,7 @@ For the prompts below, use `$skill-name` in Codex or `/skill-name` in Claude Cod
   ```
 
 - [ ] Set the client’s identity and origin in `src/consts.ts`, replace demo content/assets and configure any required forms or CMS. Review [Before shipping](#before-shipping).
-- [ ] Check the actual page in Stacki’s design and interactive modes, plus a normal browser. Follow [the installed-editor checklist](docs/stacki.md#check-inside-your-installed-editor); automated simulation does not certify the installed editor.
+- [ ] Review the site in a browser and follow the [Stacki editor checklist](docs/stacki.md#check-inside-your-installed-editor).
 - [ ] Before review or release, ask:
 
   ```text
@@ -66,7 +64,7 @@ For the prompts below, use `$skill-name` in Codex or `/skill-name` in Claude Cod
   local preview. Report untested integrations and remaining launch setup.
   ```
 
-- [ ] Create and connect a separate client GitHub repository under the agreed owner. The generator initialises neither Git nor a remote; the setup prompt above asks your assistant to initialise local Git. To publish, explicitly ask:
+- [ ] Create a client GitHub repository under the agreed owner. The setup prompt initialises local Git; publishing is a separate step:
 
   ```text
   Create a private GitHub repository named client-name under [owner],
@@ -88,7 +86,7 @@ The generator copies these files into every client project:
 
 Keep these files in the client repository. Codex discovers skills in `.agents/skills`; Claude Code uses the matching relative links in `.claude/skills`. `CLAUDE.md` imports `AGENTS.md` so both tools use the same project rules. Skills load when selected or matched to a task; explicit prompts make the intended workflow clear. See [Codex skills](https://learn.chatgpt.com/docs/build-skills) and [Claude Code skills](https://code.claude.com/docs/en/skills).
 
-Client projects are independent copies: the configured weekly task validates and pushes changes to the maintained GitHub starter, not existing client sites. Cloning the repository does not install a scheduled task on another computer. Review and apply updates to client projects separately.
+Client projects are independent copies. The maintainer’s weekly task updates the GitHub starter; apply relevant updates to existing client projects separately. Cloning the repo does not create a scheduled task.
 
 ### Terminal alternative
 
@@ -103,7 +101,7 @@ git init
 npm run dev
 ```
 
-The scaffolder copies source, lockfile and project skills without dependencies, Git history, editor state or secrets. Keep this starter as the reusable source. If Stacki already owns the client dev server, use its URL rather than starting another server unnecessarily.
+The generator copies source, lockfile and skills into a fresh folder, excluding dependencies, Git history, editor state and secrets. When Stacki runs the dev server, use its preview URL.
 
 ### GitHub template alternative
 
@@ -111,19 +109,17 @@ On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-star
 
 ### Optional global Codex skill installation
 
-The repository-local skill works directly when this checkout is open in Codex. To invoke it from other folders, run `npm run skills:install` once from your starter checkout to install `astro-lumos-starter` in the local Codex skill directory and record this starter’s location. The installer refuses to overwrite an existing skill. Restart Codex if needed. This is a machine-level entry point for creating new projects; the project-level skills are already included in every generated site and need no separate global installation.
+To invoke the new-project skill from other folders in Codex, run `npm run skills:install` from this checkout. It installs a local pointer to the starter and preserves existing installations. Repository skills work directly in Codex and Claude Code without this step.
 
 ## Included
 
-- Lumos for Astro 1.0.3 foundation and its component library and original skills.
-- One Lenis instance, driven by GSAP's ticker, with native touch and anchor navigation.
-- One shared data-reveal script with scoped GSAP/ScrollTrigger instances; content remains visible without JavaScript.
-- Resource scopes for listeners, timers, RAF callbacks, observers and fetch cancellation.
-- Reference-counted scroll locking, native dialog focus handling and cleanup.
-- Reduced-motion changes handled while the page is open. Motion also pauses in hidden tabs and the supported Studio authoring mode.
-- Astro ClientRouter with explicit fade/slide/none viewport transitions, navigation cleanup and no-JavaScript fallback. No Taxi.js.
-- A demo at `/`, another page at `/next`, the inherited library at `/example-components`.
-- Unit checks, repeatable Chromium browser checks, scoped frame/resize helpers and development-only diagnostics.
+- Lumos components, original dark/lime theme and page-building skills.
+- Lenis smooth scrolling with a shared GSAP clock and native touch/anchor navigation.
+- Data-attribute animations, scoped cleanup and live reduced-motion support.
+- Astro ClientRouter with fade, slide and disabled-animation options.
+- Accessible dialog/dropdown controls with independent state and scroll locks.
+- Development console metrics, an optional FPS panel and browser checks.
+- Demo routes at `/`, `/next` and `/example-components`.
 
 ## Page transitions
 
@@ -160,7 +156,7 @@ import Layout from "@/layouts/BaseLayout.astro";
 
 Use `pageTransition="fade"` for a crossfade or `pageTransition="none"` to disable that page’s viewport animation. Omit the prop to return to the site-wide default. `none` keeps ClientRouter navigation enabled; it is not a full browser reload. For a transition with no animation on either snapshot, both the outgoing and incoming pages must use `none`.
 
-Keep the layout’s animation on the root viewport (`transition:name="root"`), rather than adding a shared name to the full-height `<main>`: animating that scrolled bounding box creates an apparent scroll back to the top. Reduced motion disables decorative transition animations automatically. See [navigation and lifecycle guidance](docs/navigation.md) for project-specific transitions and cleanup.
+Keep page transitions on the root viewport (`transition:name="root"`) so navigation from a scrolled position stays stable. Reduced motion disables decorative animations. See [navigation lifecycle](docs/navigation.md) for implementation details.
 
 ### Example prompts for Codex and Claude Code
 
@@ -192,12 +188,11 @@ leave and enter effects deliberately, including navigation back out of
 Use Astro ClientRouter and its supported animation/lifecycle APIs. Keep
 page-wide animation on the root viewport, use data attributes for any
 additional shared element effects, and preserve cleanup, instant route
-scroll positioning, history/anchors and reduced motion. Add no second
-router or global heading selectors. Update the docs, run the relevant
-checks, and provide a local preview for review.
+scroll positioning, history/anchors and reduced motion. Update the docs,
+run the relevant checks, and provide a local preview for review.
 ```
 
-Replace `/about` and the effect description with the actual route and desired motion. A new custom value requires an implementation in the layout; naming it on a page alone does not create the animation. These prompts request implementation; the starter currently ships only `fade`, `slide` and `none`.
+Replace `/about` and the motion description as needed. Custom transition values require an implementation in the layout; the built-in values are `fade`, `slide` and `none`.
 
 ## Validate
 
@@ -213,38 +208,33 @@ BASE_URL=http://127.0.0.1:4323 npm run test:browser
 
 For development helpers, run `npm run dev -- --host 127.0.0.1 --port 4322`, then `BASE_URL=http://127.0.0.1:4322 npm run test:development` in another terminal.
 
-On a machine with Google Chrome installed, set `PLAYWRIGHT_CHANNEL=chrome` instead of downloading Chromium. Browser checks write screenshots to `output/playwright/` (ignored by Git). `npm run dev` provides a local visual preview; never treat a passing build as proof that the Studio canvas works.
+With Google Chrome installed, set `PLAYWRIGHT_CHANNEL=chrome` to use it for browser checks. Screenshots are saved to `output/playwright/`. Review the site in a browser and Stacki alongside the automated checks.
 
 ## Before shipping
 
 Set `src/consts.ts` (site name, description, canonical origin, locale). Replace the neutral demo, Lumos logos, favicon and social image. Remove example-only pages as appropriate. Configure and test a real form endpoint: the inherited form is a demonstration until an endpoint is supplied. Keep private credentials in provider-managed server secrets; this starter needs none. Static output is `dist/`, suitable for Cloudflare Pages; dynamic Astro routes require a separately configured Cloudflare adapter.
 
-Read [project instructions](AGENTS.md), [runtime and component contract](docs/motion.md), [Stacki integration and limits](docs/stacki.md), [navigation decision](docs/navigation.md) and [provenance](docs/provenance.md).
-
-See [delivery verification](docs/verification.md) for checks performed and integration limits.
-
-## Understand and maintain the starter
-
-- [Astro basics and the text animation](docs/astro-basics.md)
-- [Federico's setup: capability comparison and recipes](docs/federico-comparison.md)
-- [Lumos updates and maintenance](docs/maintenance.md)
-
-The demo uses the original Lumos dark theme and lime brand card; its original swatch tokens are preserved. Lumos 1.0.3 and its matching Astro 7.4.7 patch are integrated. In development, Shift+F toggles optional motion diagnostics; it is excluded from the production runtime. Run `npm run updates:check` to compare the exact upstream commit without applying changes.
-
 ## Page and behaviour structure
 
-Compose ordinary sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Keep custom scripts/styles out of route files. Extract smaller content/card components only for useful markup, styling or interaction boundaries; `index.astro`, `HeroIntro.astro` and `PrincipleCard.astro` are the examples. The old whole-page MotionDemo component is removed. Shared dialog/dropdown behavior is loaded once by site.ts from overlays.ts, with explicit data attributes, native semantics and independent instance state/cleanup.
-
-The canonical source is now this named project workspace. The configured weekly maintenance task keeps the GitHub template in sync after validation. Source downloads are written under `outputs/`.
+Compose sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Smaller components own their content, styles or specific interactions; see `index.astro`, `HeroIntro.astro` and `PrincipleCard.astro`. Shared animations and overlays live in `src/scripts/` and use explicit data attributes. See [Astro structure](docs/astro-basics.md) and [motion ownership](docs/motion.md).
 
 ## Console timing
 
-Development includes a lightweight Tick-style console utility: `tick.add("checkpoint", true)`, browser timing observations and opt-in frame-gap/function diagnostics. The head marker and module are excluded from production. See [Tick usage and measurement limits](docs/tick.md). The existing Shift+F panel remains available.
-
-The repository-local new-project skill works from any checkout location. Optional global installations keep their own local pointer; scheduled maintenance is configured separately.
+In development, open the console for Tick metrics or press **Shift+F** for the FPS panel. Use `tick.add("checkpoint", true)` for a named timing event. These tools are excluded from production. See [Tick usage](docs/tick.md).
 
 ## Scrollbar defaults
 
-Scrollbars are hidden by default for the page and nested scroll containers. Scrolling, keyboard controls and native touch remain enabled; these styles do not set overflow or change Lenis. The shared rules live in `src/styles/preferences.css`.
+Scrollbars are hidden by default while scrolling remains enabled. The rules live in `src/styles/preferences.css`.
 
 To show native scrollbars throughout a site, add `data-scrollbars="visible"` to the `<html>` element in `src/layouts/BaseLayout.astro`. To show them only in a scrolling panel, add the attribute to that container instead. The preference applies to its descendants too; a nested `data-scrollbars="hidden"` can opt back out. Browser/system settings still determine native scrollbar appearance.
+
+## Reference docs
+
+- [Astro structure and shared animations](docs/astro-basics.md)
+- [Motion and cleanup](docs/motion.md)
+- [Page transitions](docs/navigation.md)
+- [Stacki integration](docs/stacki.md)
+- [Tick metrics](docs/tick.md)
+- [Lumos updates and maintenance](docs/maintenance.md)
+- [Recorded validation](docs/verification.md)
+- [Sources and licensing](docs/provenance.md)

@@ -1,38 +1,44 @@
 # Maintaining Astro Lumos Starter
 
-Lumos is scaffolded source, not just an npm dependency. Updating npm packages alone does not update its components or tokens. The `lumos.version` and `lumos.commit` fields in package.json record the last integrated upstream baseline. Keep the full commit: changes can arrive before a version label changes.
+Lumos components and tokens are copied source. `package.json` records the integrated `lumos.version` and exact `lumos.commit` used as the three-way merge baseline.
 
-Run `npm run updates:check` for a read-only upstream source comparison. Add `-- --write` to save a verified report to `docs/maintenance/last-check.json`. It checks the pinned baseline against the public repository's current main tree and reads the package version at that exact commit. Network failure, rate limiting, missing baseline or an incomplete tree is an error, not evidence that the project is up to date. The script does not modify source, install dependencies or advance the baseline itself. Read current [Lumos documentation](https://lumosframework.com/docs/) and release notes as well; docs may change independently of source.
+## Check for updates
 
-## Recurring workflow
+```sh
+npm run updates:check
+# Save the verified comparison:
+npm run updates:check -- --write
+```
 
-The requested weekly check targets this original starter only. Client projects are independent snapshots; no client repository, hosting environment, account or deployed site is silently updated.
+The checker compares the baseline with the upstream main commit and reads its package version. Review [Lumos docs](https://lumosframework.com/docs/) and release notes too. Network/API failures leave the update status unverified. The checker reports candidates; integration is a separate step.
 
-1. Verify the starter's path, Git branch and clean status. If there are existing edits, report them and keep checking upstream; do not stash, reset or overwrite user work. Retain a local pre-upgrade commit and visual screenshots.
-2. Use the recorded commit for the merge base, latest upstream source for the incoming version, and this project for customizations. Follow `.agents/skills/lumos-upgrade-version/SKILL.md` with the starter-specific protections below. Work in an isolated local branch/worktree for the candidate.
-3. Apply compatible framework fixes, merge shared files three ways, and check dependency pairings. Do not guess removed prop behavior or silently adopt breaking changes. Preserve user tokens/branding, demo content, runtime, tests and added skills. Document deliberate upstream omissions.
-4. Run type checks, unit/scaffold checks, build and production browser suite, plus development checks when helpers/diagnostics changed. Capture desktop/mobile screenshots before and after. Every visual difference must be explained; theme or content changes are not routine upgrades.
-5. After successful checks and visual review, commit and integrate compatible changes locally only if the original tree is still clean and its branch/head have not changed. Regenerate the source ZIP, advance the Lumos baseline only to the commit actually integrated and record changes/checks. If validation or merge decisions remain unresolved, leave the candidate isolated and report what needs attention.
-6. The configured task is authorised to push verified starter changes to `https://github.com/MadeByKin/astro-lumos-starter.git`, branch `main`. Confirm this exact original checkout, branch and remote, fetch `origin`, and ensure the remote is an ancestor of the validated local HEAD. Verify every outgoing commit belongs to the reviewed starter changes; do not publish unrelated or unverified local commits. Recheck clean status and HEAD before `git push origin main` (normal fast-forward only), then verify remote main matches the validated commit. If the remote diverged or advanced, authentication fails, the tree changed, or validation is incomplete, stop publication and report it; never force-push, auto-resolve remote conflicts or rewrite history.
-7. No-change runs need no commits or push. A previously verified, unpushed maintenance commit may be retried only after checking its recorded validation and revalidating when source or dependencies changed. Never deploy, update client copies or upgrade an Astro major automatically. Archive generation stays local and excludes dependencies, secrets and editor state.
+## Integration workflow
 
-## Starter-specific protections
+1. Confirm the checkout, branch, HEAD and clean tree. Preserve existing edits; a dirty tree permits read-only checking. Capture a baseline commit and desktop/mobile screenshots.
+2. Prepare the candidate in an isolated branch/worktree using `.agents/skills/lumos-upgrade-version/SKILL.md` and the recorded upstream baseline.
+3. Merge shared files three ways, check dependency pairings and record included/omitted changes. Preserve theme tokens, pages, runtime, controls, tests and local skills. Leave conflicts, removed-prop decisions and breaking changes for review.
+4. Run type checks, unit/scaffold tests, build and production browser checks. Run development checks when diagnostics/helpers change. Compare before/after captures and explain visual differences. Check the installed Studio when editor integration changes, recording any remaining gap.
+5. Integrate and commit only after validation passes and the original branch, HEAD and clean tree remain unchanged. Advance the Lumos stamp to the source actually merged.
 
-The upstream upgrade skill's wholesale `.agents/skills` refresh must not delete locally added `astro-lumos-starter`, `astro-lumos-page`, `astro-lumos-interaction`, `astro-lumos-release`, `astro-lumos-maintenance`, or project-specific sections. Preserve their Claude symlinks and LUMOS.md's local shared-animation preference section. Keep the installed `astro-lumos-starter` skill pointing at this source. Use the migration workflow for upstream skills, not the Webflow runtime's skill instructions.
+## Scheduled publication
 
-Our attribute-driven global effects, ClientRouter lifecycle, interaction hosts, reduced-motion policy and trusted-origin Studio adapter are maintained additions. Review upstream edits to those components rather than replacing the scripts wholesale. The source monitor identifies a candidate; it does not prove Studio compatibility. Exercise the actual installed Studio for changes to source mapping or editing behavior when available, and state when only the simulated fixture was run.
+The maintainer's configured Monday 09:00 Europe/London task follows this workflow and may push verified starter changes to `https://github.com/MadeByKin/astro-lumos-starter.git`, branch `main`. This authorisation applies only to the configured original checkout. Cloning the repository does not install a task or authorise publication of client projects.
 
-## Initial update included in this delivery
+Before publishing, confirm the exact checkout, branch and remote; fetch `origin`; review every outgoing commit; and recheck clean status and the validated HEAD. Remote main must be an ancestor of that HEAD. Use a normal `git push origin main`, then verify the remote SHA matches.
 
-Updated from Lumos 1.0.2 / `5e81e860175ed6cf4086c203e4178c2c6744ad93` to 1.0.3 / `9eb6523e70e49548a1e29d81ae26a5482fa0b790`:
+Stop publication if the remote advances or diverges, authentication fails, the tree/HEAD changes or validation is incomplete. Preserve the candidate and report the blocker; force-push and automatic remote conflict resolution are excluded. A no-change run needs no commit or push. Retry a verified unpushed commit after reviewing its recorded checks, rerunning validation if relevant state changed. Deployments, client-site updates and Astro major upgrades require separate decisions.
 
-- Took the untouched upstream ContentWrapper breakout fix: use container-query width and an inline-size container instead of viewport width, avoiding scrollbar-width overhang.
-- Moved Astro from 7.4.4 to the upstream 7.4.7 patch and regenerated the lockfile. The integration dependency versions otherwise matched.
-- Preserved our custom pages and original Lumos colour tokens. Upstream page content and local editor-state files were intentionally not imported.
-- Did not copy upstream's GitHub Actions workflow; maintenance is handled by the explicitly requested local recurring task. No remote GitHub repository or CI publication was created at that initial delivery. The starter is now maintained at MadeByKin/astro-lumos-starter; the configured task is authorised to push verified changes as described above.
+## Preserve during upgrades
 
-See `docs/verification.md` for the final validation evidence.
+Keep route-level section composition, shared attribute-driven animations/overlays, scoped cleanup, reduced motion, the trusted-origin Studio adapter, root viewport transitions and scrollbar preferences. Preserve local `astro-lumos-*` skills, their Claude links, `CLAUDE.md`, project-specific `AGENTS.md`/`LUMOS.md` rules and development-only Tick diagnostics. Optional global skill pointers stay local to each machine.
 
-After committing a verified update, regenerate the source archive from that exact commit with `git archive --format=zip --prefix=astro-lumos-starter/ --output=outputs/astro-lumos-starter.zip HEAD`. This replaces the archive cleanly, excludes ignored dependencies/editor state, and does not retain deleted files from a prior ZIP.
+## Source archive
 
-The configured maintainer task targets its original local checkout; other contributors can keep clones anywhere. Create `outputs/` before archiving; it is ignored by Git. Preserve visible page section composition and the shared overlay controller during upgrades.
+After committing a verified update:
+
+```sh
+mkdir -p outputs
+git archive --format=zip --prefix=astro-lumos-starter/ --output=outputs/astro-lumos-starter.zip HEAD
+```
+
+The ignored ZIP contains tracked source from that commit. See [recorded validation](verification.md) for test coverage and [provenance](provenance.md) for the integrated baseline.
