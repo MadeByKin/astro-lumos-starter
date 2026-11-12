@@ -4,21 +4,23 @@ A reusable static Astro foundation with Lumos components, Lenis, GSAP + ScrollTr
 
 ## Start a client project
 
-Requires Node 22.23.4+ and npm. Clone this starter repository and open its folder in Codex to use the included new-project skill, or use the terminal commands below. No global skill installation is required. Each client gets an independent folder and Git repository.
+Requires Node 22.23.4+ and npm. Clone this starter repository and open its folder in Codex or Claude Code to use the included new-project skill, or use the terminal commands below. No global skill installation is required. Each client gets an independent folder and Git repository.
 
-Clone the starter into a location of your choice (GitHub access is required while the repository is private):
+Clone the starter into a location of your choice:
 
 ```sh
 git clone https://github.com/MadeByKin/astro-lumos-starter.git
 cd astro-lumos-starter
 ```
 
-Open this checkout in Codex. If the skill is not listed, restart Codex or explicitly ask it to read `.agents/skills/astro-lumos-starter/SKILL.md`.
+Open this checkout in Codex or Claude Code. Codex uses `$astro-lumos-starter`; Claude Code uses `/astro-lumos-starter`. If the skill is not listed, restart your tool or explicitly ask it to read `.agents/skills/astro-lumos-starter/SKILL.md`.
+
+For the prompts below, use `$skill-name` in Codex or `/skill-name` in Claude Code. For example, replace `Use $astro-lumos-starter to create …` with `/astro-lumos-starter Create …` in Claude Code. The plain-language instructions work in either tool.
 
 ### New-client checklist
 
 - [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
-- [ ] Open your starter checkout in Codex, then ask it to generate the project with the prompt below. The portable skill lives at `.agents/skills/astro-lumos-starter/SKILL.md` and resolves the source from its own location.
+- [ ] Open your starter checkout in Codex or Claude Code, then ask it to generate the project with the prompt below. The portable skill lives at `.agents/skills/astro-lumos-starter/SKILL.md` and resolves the source from its own location.
 
   ```text
   Use $astro-lumos-starter to create /absolute/path/to/client-name,
@@ -30,7 +32,7 @@ Open this checkout in Codex. If the skill is not listed, restart Codex or explic
   Replace the example name, path and URL. If the URL is unknown, omit it; the generated project retains an example origin that must be replaced before launch.
 
 - [ ] In Stacki, choose **Open Existing Project…** and select the generated client folder. Stacki starts the project’s development server. Open this folder rather than creating another blank Astro project. See the [Stacki quick start](https://stacki.build/docs/quick-start/).
-- [ ] Open that **same client folder** as a project in Codex and start a fresh chat there. Use this first prompt:
+- [ ] Open that **same client folder** in Codex or Claude Code and start a fresh chat there. Use this first prompt:
 
   ```text
   Read AGENTS.md and LUMOS.md, and identify the relevant project skills
@@ -40,7 +42,7 @@ Open this checkout in Codex. If the skill is not listed, restart Codex or explic
   checkout before editing and customise this project only.
   ```
 
-- [ ] Confirm Codex can see the project skills. If they do not appear, restart Codex with the client folder open. Request a specific workflow when useful:
+- [ ] Confirm your tool can see the project skills. If they do not appear, restart it with the client folder open. Request a specific workflow when useful:
 
   ```text
   Use $astro-lumos-page to build the home page from this brief: [brief].
@@ -64,7 +66,7 @@ Open this checkout in Codex. If the skill is not listed, restart Codex or explic
   local preview. Report untested integrations and remaining launch setup.
   ```
 
-- [ ] Create and connect a separate client GitHub repository under the agreed owner. The generator initialises neither Git nor a remote; the setup prompt above asks Codex to initialise local Git. To publish, explicitly ask:
+- [ ] Create and connect a separate client GitHub repository under the agreed owner. The generator initialises neither Git nor a remote; the setup prompt above asks your assistant to initialise local Git. To publish, explicitly ask:
 
   ```text
   Create a private GitHub repository named client-name under [owner],
@@ -72,18 +74,19 @@ Open this checkout in Codex. If the skill is not listed, restart Codex or explic
   Exclude dependencies, build outputs, editor state and secrets.
   ```
 
-### What keeps Codex consistent
+### What keeps Codex and Claude Code consistent
 
 The generator copies these files into every client project:
 
 | File or folder    | Purpose                                                               |
 | ----------------- | --------------------------------------------------------------------- |
 | `AGENTS.md`       | Project-wide instructions and required checks                         |
+| `CLAUDE.md`       | Imports the shared instructions for Claude Code                       |
 | `LUMOS.md`        | Lumos component and styling conventions                               |
 | `.agents/skills/` | Page, interaction, release, maintenance and inherited Lumos workflows |
 | `docs/`           | Motion, Stacki, navigation, Tick and supporting guidance              |
 
-Keep these files in the client repository. Codex discovers repository skills in `.agents/skills` and loads the relevant instructions when a skill is selected or matched to a task; explicit skill prompts make the intended workflow clear. See [official skill guidance](https://learn.chatgpt.com/docs/build-skills).
+Keep these files in the client repository. Codex discovers skills in `.agents/skills`; Claude Code uses the matching relative links in `.claude/skills`. `CLAUDE.md` imports `AGENTS.md` so both tools use the same project rules. Skills load when selected or matched to a task; explicit prompts make the intended workflow clear. See [Codex skills](https://learn.chatgpt.com/docs/build-skills) and [Claude Code skills](https://code.claude.com/docs/en/skills).
 
 Client projects are independent copies: the configured weekly task validates and pushes changes to the maintained GitHub starter, not existing client sites. Cloning the repository does not install a scheduled task on another computer. Review and apply updates to client projects separately.
 
@@ -104,9 +107,9 @@ The scaffolder copies source, lockfile and project skills without dependencies, 
 
 ### GitHub template alternative
 
-On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and Codex and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. The repository already exists on this route, so skip the create-repository prompt.
+On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. The repository already exists on this route, so skip the create-repository prompt.
 
-### Optional global skill installation
+### Optional global Codex skill installation
 
 The repository-local skill works directly when this checkout is open in Codex. To invoke it from other folders, run `npm run skills:install` once from your starter checkout to install `astro-lumos-starter` in the local Codex skill directory and record this starter’s location. The installer refuses to overwrite an existing skill. Restart Codex if needed. This is a machine-level entry point for creating new projects; the project-level skills are already included in every generated site and need no separate global installation.
 
@@ -158,6 +161,43 @@ import Layout from "@/layouts/BaseLayout.astro";
 Use `pageTransition="fade"` for a crossfade or `pageTransition="none"` to disable that page’s viewport animation. Omit the prop to return to the site-wide default. `none` keeps ClientRouter navigation enabled; it is not a full browser reload. For a transition with no animation on either snapshot, both the outgoing and incoming pages must use `none`.
 
 Keep the layout’s animation on the root viewport (`transition:name="root"`), rather than adding a shared name to the full-height `<main>`: animating that scrolled bounding box creates an apparent scroll back to the top. Reduced motion disables decorative transition animations automatically. See [navigation and lifecycle guidance](docs/navigation.md) for project-specific transitions and cleanup.
+
+### Example prompts for Codex and Claude Code
+
+Use these in the client project checkout. Codex can use `Use $astro-lumos-interaction` before either prompt; in Claude Code, invoke `/astro-lumos-interaction` followed by the same instructions.
+
+**Change the default transition:**
+
+```text
+Change this site's default page transition from fade to slide in
+src/layouts/BaseLayout.astro. Keep existing explicit page overrides.
+Keep the animation on the root viewport, preserve ClientRouter history
+and anchor scrolling, and respect reduced motion. Update the docs and
+verify navigation from the top and part way down a page, plus Back/Forward.
+Provide a local preview before calling it complete.
+```
+
+To apply one effect everywhere, replace “Keep existing explicit page overrides” with “Remove explicit pageTransition overrides so every page inherits the new default.”
+
+**Create a custom transition for one page:**
+
+```text
+Create a custom transition for /about: a short fade combined with a
+subtle upward entrance, lasting 0.35s. Keep the current default on all
+other pages. Extend BaseLayout's typed pageTransition options and the
+animation mapping, then opt /about into the new transition. Define both
+leave and enter effects deliberately, including navigation back out of
+/about; the two snapshots can use different page settings.
+
+Use Astro ClientRouter and its supported animation/lifecycle APIs. Keep
+page-wide animation on the root viewport, use data attributes for any
+additional shared element effects, and preserve cleanup, instant route
+scroll positioning, history/anchors and reduced motion. Add no second
+router or global heading selectors. Update the docs, run the relevant
+checks, and provide a local preview for review.
+```
+
+Replace `/about` and the effect description with the actual route and desired motion. A new custom value requires an implementation in the layout; naming it on a page alone does not create the animation. These prompts request implementation; the starter currently ships only `fade`, `slide` and `none`.
 
 ## Validate
 

@@ -41,7 +41,7 @@ any scripts they need.
 - `lumos-import-webflow` — migrate a Webflow export and connect its CMS.
 - `lumos-upgrade-version` — upgrade Lumos without losing customizations.
 
-`.agents/skills/` is the source of truth. Claude Code loads the same skills from
+`AGENTS.md` holds the shared rules; `CLAUDE.md` imports it for Claude Code. `.agents/skills/` is the source of truth. Claude Code loads the same skills from
 relative symlinks in `.claude/skills/`. For each new skill, add
 `.claude/skills/<name>` pointing to `../../.agents/skills/<name>`.
 

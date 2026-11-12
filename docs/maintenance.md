@@ -35,4 +35,4 @@ See `docs/verification.md` for the final validation evidence.
 
 After committing a verified update, regenerate the source archive from that exact commit with `git archive --format=zip --prefix=astro-lumos-starter/ --output=outputs/astro-lumos-starter.zip HEAD`. This replaces the archive cleanly, excludes ignored dependencies/editor state, and does not retain deleted files from a prior ZIP.
 
-The maintained source now lives at `/Users/jordangilroy/Build/astro-lumos-starter`. Create `outputs/` before archiving; it is ignored by Git. Preserve visible page section composition and the shared overlay controller during upgrades.
+The configured maintainer task targets its original local checkout; other contributors can keep clones anywhere. Create `outputs/` before archiving; it is ignored by Git. Preserve visible page section composition and the shared overlay controller during upgrades.

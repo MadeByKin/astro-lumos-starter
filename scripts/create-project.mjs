@@ -61,6 +61,7 @@ const entries = [
   ".prettierignore",
   ".prettierrc",
   "AGENTS.md",
+  "CLAUDE.md",
   "LUMOS.md",
   "LICENSE",
   "README.md",

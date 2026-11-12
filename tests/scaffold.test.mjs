@@ -53,6 +53,10 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     await access(
       path.join(target, ".claude/skills/astro-lumos-interaction/SKILL.md"),
     );
+    assert.match(
+      await readFile(path.join(target, "CLAUDE.md"), "utf8"),
+      /@AGENTS\.md/,
+    );
     await access(
       path.join(target, ".agents/skills/astro-lumos-starter/SKILL.md"),
     );
