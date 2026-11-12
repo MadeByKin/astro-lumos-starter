@@ -118,9 +118,46 @@ The repository-local skill works directly when this checkout is open in Codex. T
 - Resource scopes for listeners, timers, RAF callbacks, observers and fetch cancellation.
 - Reference-counted scroll locking, native dialog focus handling and cleanup.
 - Reduced-motion changes handled while the page is open. Motion also pauses in hidden tabs and the supported Studio authoring mode.
-- Astro ClientRouter with explicit fade/slide/none main-content transitions, navigation cleanup and no-JavaScript fallback. No Taxi.js.
+- Astro ClientRouter with explicit fade/slide/none viewport transitions, navigation cleanup and no-JavaScript fallback. No Taxi.js.
 - A demo at `/`, another page at `/next`, the inherited library at `/example-components`.
 - Unit checks, repeatable Chromium browser checks, scoped frame/resize helpers and development-only diagnostics.
+
+## Page transitions
+
+Astro ClientRouter handles internal navigation. Each page’s `BaseLayout` accepts `pageTransition="fade" | "slide" | "none"`. The effect is configured on the page, not the link: `/next` demonstrates a slide, while home and the component library currently inherit the fade default. The outgoing and incoming snapshots use their respective page settings, so mixed settings can produce different leave/enter effects.
+
+### Change the site-wide default
+
+In `src/layouts/BaseLayout.astro`, change the destructured prop default:
+
+```ts
+const {
+  theme = "inherit",
+  overlap = false,
+  pageTransition = "slide", // "fade", "slide" or "none"
+  ...seo
+} = Astro.props;
+```
+
+Pages that omit `pageTransition` inherit this default. Existing explicit overrides remain in effect; remove them if every page should follow the default. The starter currently uses a 0.2s fade and a 0.4s slide; change the `fade({ duration: "0.2s" })` or `slide({ duration: "0.4s" })` options in the same layout to adjust their timing.
+
+### Override an individual page
+
+Set the prop on that route’s layout in `src/pages/*.astro`:
+
+```astro
+---
+import Layout from "@/layouts/BaseLayout.astro";
+---
+
+<Layout title="About" pageTransition="slide">
+  <!-- Compose this page’s sections here. -->
+</Layout>
+```
+
+Use `pageTransition="fade"` for a crossfade or `pageTransition="none"` to disable that page’s viewport animation. Omit the prop to return to the site-wide default. `none` keeps ClientRouter navigation enabled; it is not a full browser reload. For a transition with no animation on either snapshot, both the outgoing and incoming pages must use `none`.
+
+Keep the layout’s animation on the root viewport (`transition:name="root"`), rather than adding a shared name to the full-height `<main>`: animating that scrolled bounding box creates an apparent scroll back to the top. Reduced motion disables decorative transition animations automatically. See [navigation and lifecycle guidance](docs/navigation.md) for project-specific transitions and cleanup.
 
 ## Validate
 
