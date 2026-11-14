@@ -7,12 +7,14 @@ interface Props extends HTMLAttributes<"form"> {
   render?: boolean;
   /** Form name. */
   name?: string;
-  /** Form endpoint. Omit to skip submission. */
+  /** Form endpoint. Required for successful submission. */
   action?: string;
   /** Message shown after submission. */
   successMessage?: string;
   /** Message shown after an error. */
   errorMessage?: string;
+  /** Public Turnstile site key for /api/contact. Defaults to PUBLIC_TURNSTILE_SITE_KEY. */
+  turnstileSiteKey?: string;
 }
 
 const {
@@ -21,22 +23,32 @@ const {
   action,
   successMessage = "Thanks — we will be in touch.",
   errorMessage = "That did not send. Please try again.",
+  turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "",
   method = "post",
   class: className,
   ...rest
 } = Astro.props;
 
 const content = await slotContent(Astro.slots);
+const submitContent = await slotContent(Astro.slots, "submit");
+const cloudflare = action === "/api/contact";
 ---
 
-{render && (
+{render && name && content && (
   <lumos-form style="display: contents">
-    {render && name && content && (
-      <div
-        class:list={["form_wrap", className]}
-        data-state="idle"
-        data-endpoint={action}
-      >
+    <div
+      class:list={["form_wrap", className]}
+      data-state="idle"
+      data-endpoint={action}
+      data-cloudflare={cloudflare ? "true" : undefined}
+      data-site-key={cloudflare ? turnstileSiteKey : undefined}
+    >
+      {cloudflare && !turnstileSiteKey ? (
+        <p class="text-style-main" role="status">
+          The contact form is currently unavailable. Please contact us by email
+          instead.
+        </p>
+      ) : (
         <form
           class="form_fields"
           name={name}
@@ -45,55 +57,128 @@ const content = await slotContent(Astro.slots);
           {...rest}
         >
           <Fragment set:html={content} />
+          {cloudflare && (
+            <>
+              <label class="form_trap" aria-hidden="true">
+                Leave this field empty
+                <input
+                  name="website"
+                  type="text"
+                  tabindex="-1"
+                  autocomplete="off"
+                />
+              </label>
+              <div data-contact-challenge></div>
+              <p data-contact-status class="text-style-main" role="status">
+                Complete the spam check before sending.
+              </p>
+              <noscript>
+                <p>
+                  This form needs JavaScript for its spam check. Please contact
+                  us by email instead.
+                </p>
+              </noscript>
+            </>
+          )}
+          <Fragment set:html={submitContent} />
         </form>
-
-        <p class="form_note form_note-sent text-style-main" role="status">
-          {successMessage}
-        </p>
-        <p class="form_note form_note-failed text-style-main" role="alert">
-          {errorMessage}
-        </p>
-      </div>
-    )}
+      )}
+      <p class="form_note form_note-sent text-style-main" role="status">
+        {successMessage}
+      </p>
+      <p class="form_note form_note-failed text-style-main" role="alert">
+        {errorMessage}
+      </p>
+    </div>
   </lumos-form>
 )}
 <script>
   import { defineBehaviour } from "@/lib/motion/scope";
+  import { loadTurnstile } from "@/lib/forms/turnstile";
 
   defineBehaviour("lumos-form", (host, scope) => {
     const form = host.querySelector<HTMLElement>(".form_wrap");
-    if (!form) return;
-
-    const fields = form.querySelector<HTMLFormElement>(".form_fields");
-    if (!fields) return;
-
+    const fields = form?.querySelector<HTMLFormElement>(".form_fields");
+    if (!form || !fields) return;
+    const cloudflare = form.dataset.cloudflare === "true";
     const submit = fields.querySelector<HTMLButtonElement | HTMLInputElement>(
       'button:not([type]), button[type="submit"], input[type="submit"]',
     );
-
+    const initiallyDisabled = submit?.disabled ?? false;
+    let ready = !cloudflare;
+    let resetChallenge: (() => void) | undefined;
+    if (cloudflare) form.dataset.state = "idle";
     scope.defer(() => {
-      if (submit) submit.disabled = false;
+      if (submit) submit.disabled = initiallyDisabled;
+      fields.removeAttribute("aria-busy");
+      if (form.dataset.state === "sending") form.dataset.state = "idle";
     });
+    if (cloudflare) {
+      const container = fields.querySelector<HTMLElement>(
+        "[data-contact-challenge]",
+      );
+      const status = fields.querySelector<HTMLElement>("[data-contact-status]");
+      const sitekey = form.dataset.siteKey;
+      if (submit) submit.disabled = true;
+      if (!container || !status || !sitekey) return;
+      status.textContent = "Complete the spam check before sending.";
+      const unavailable = () => {
+        if (scope.signal.aborted) return;
+        ready = false;
+        if (submit) submit.disabled = true;
+        status.textContent =
+          "Please complete the spam check again, or contact us by email.";
+      };
+      void loadTurnstile()
+        .then((api) => {
+          if (scope.signal.aborted) return;
+          container.replaceChildren();
+          const id = api.render(container, {
+            sitekey,
+            action: "contact",
+            callback: () => {
+              if (scope.signal.aborted) return;
+              ready = true;
+              if (submit) submit.disabled = form.dataset.state === "sending";
+              status.textContent = "Ready to send.";
+            },
+            "expired-callback": unavailable,
+            "error-callback": unavailable,
+          });
+          resetChallenge = () => {
+            unavailable();
+            api.reset(id);
+          };
+          scope.defer(() => api.remove(id));
+        })
+        .catch(unavailable);
+    }
     fields.addEventListener(
       "submit",
       async (event) => {
-        const endpoint = form.dataset.endpoint;
-
-        if (!fields.checkValidity()) return;
-
         event.preventDefault();
+        if (form.dataset.state === "sending") return;
+        if (!ready) {
+          form.dataset.state = "failed";
+          return;
+        }
+        if (!fields.checkValidity()) return;
+        const endpoint = form.dataset.endpoint;
         form.dataset.state = "sending";
+        fields.setAttribute("aria-busy", "true");
         if (submit) submit.disabled = true;
-
         try {
-          if (endpoint) {
-            const answer = await fetch(endpoint, {
-              method: fields.method || "post",
-              signal: scope.signal,
-              body: new FormData(fields),
-              headers: { Accept: "application/json" },
-            });
-            if (!answer.ok) throw new Error(String(answer.status));
+          if (!endpoint) throw new Error("Missing form endpoint");
+          const answer = await fetch(endpoint, {
+            method: fields.method || "post",
+            signal: scope.signal,
+            body: new FormData(fields),
+            headers: { Accept: "application/json" },
+          });
+          if (!answer.ok) throw new Error(String(answer.status));
+          if (cloudflare) {
+            const result = await answer.json();
+            if (result.ok !== true) throw new Error("Submission not accepted");
           }
           if (scope.signal.aborted) return;
           form.dataset.state = "sent";
@@ -101,7 +186,10 @@ const content = await slotContent(Astro.slots);
         } catch {
           if (scope.signal.aborted) return;
           form.dataset.state = "failed";
-          if (submit) submit.disabled = false;
+          if (cloudflare) resetChallenge?.();
+          else if (submit) submit.disabled = initiallyDisabled;
+        } finally {
+          if (!scope.signal.aborted) fields.removeAttribute("aria-busy");
         }
       },
       { signal: scope.signal },
@@ -124,6 +212,10 @@ const content = await slotContent(Astro.slots);
       gap: var(--space-5);
       row-gap: var(--space-8);
       column-gap: var(--space-8);
+    }
+
+    .form_trap {
+      display: none;
     }
 
     .form_note {

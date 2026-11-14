@@ -10,12 +10,15 @@
     "dev": "astro dev",
     "check": "astro check",
     "build": "astro build",
+    "build:contact-fixture": "node tests/build-contact-fixture.mjs",
+    "deploy": "npm run build && wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write .",
     "new": "node scripts/create-project.mjs",
-    "test": "node --test tests/scope.test.mjs tests/scaffold.test.mjs",
+    "test": "node --test tests/scope.test.mjs tests/scaffold.test.mjs tests/contact.test.mjs",
     "test:browser": "node tests/browser.mjs",
+    "test:contact-browser": "node tests/contact-browser.mjs",
     "skills:install": "node scripts/install-skill.mjs",
     "updates:check": "node scripts/check-lumos.mjs",
     "test:development": "node tests/development.mjs"
@@ -31,7 +34,8 @@
   "devDependencies": {
     "playwright": "1.65.0",
     "prettier": "^3.9.10",
-    "prettier-plugin-astro": "^1.1.2"
+    "prettier-plugin-astro": "^1.1.2",
+    "wrangler": "^4.162.0"
   },
   "lumos": {
     "version": "1.0.3",

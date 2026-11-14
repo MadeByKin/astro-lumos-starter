@@ -2,6 +2,14 @@
 
 Open the client project in Stacki as an existing Astro project. Components expose their props, slots and Lumos tokens for editing. Design mode pauses decorative motion; interactive preview enables the normal site behavior.
 
+## Publish to Cloudflare
+
+Publishing through Stacki is the main deployment workflow. In Publish settings, select your Cloudflare account, choose **Add Worker**, enter the generated project name and save the selected hosting destination. With **Hosting** enabled, the next publish creates the Worker using the project's Cloudflare configuration.
+
+The **GitHub** option publishes source changes; **Hosting** publishes the site. Both can be enabled together. When Stacki handles hosting, leave Cloudflare's separate automatic GitHub builds disconnected to avoid duplicate deployments. See [Cloudflare setup](cloudflare.md) for the full publishing steps, domains and alternative GitHub/terminal workflows. Live Stacki-to-Cloudflare publishing still needs validation for each connected project.
+
+For contact forms, follow [client email setup](contact-forms.md). The local build needs the public Turnstile site key in `.env`; the deployed Worker needs the secret and Email Service binding. Publishing must include `worker/index.mjs` and its bindings alongside static assets. Confirm this on a live deployment before promising form delivery.
+
 ## Editor adapter
 
 `src/lib/motion/studio.ts` uses signals observed in Stacki Studio source on 11 November 2026:

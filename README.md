@@ -31,6 +31,8 @@ Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill
 
 - [ ] In Stacki, choose **Open Existing Project…** and select the generated client folder. Stacki starts the project’s development server. Open this folder rather than creating another blank Astro project. See the [Stacki quick start](https://stacki.build/docs/quick-start/).
 - [ ] Open that **same project folder** in Codex or Claude Code and start a fresh chat. Ask it to read `AGENTS.md` and `LUMOS.md` before making changes.
+- [ ] Follow [Cloudflare Workers setup](docs/cloudflare.md#publish-through-stacki-recommended) to select the Cloudflare account in Stacki, add the generated Worker name, save Publish settings and publish with **Hosting** enabled. The next publish creates the Worker. Connect the real domain when ready; GitHub builds and terminal deployment are documented alternatives.
+- [ ] For enquiries, follow [contact form setup](docs/contact-forms.md) to configure the client's sender, inbox and Turnstile keys, set `action="/api/contact"` on the existing `<Form>`, then test real delivery. The handler stays disabled until configured.
 
 ### Example interaction prompt
 
@@ -74,7 +76,7 @@ The generator copies source, lockfile and skills into a fresh folder, excluding 
 
 ### GitHub template alternative
 
-On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names and `src/consts.ts` for the client. This route creates the project repository directly.
+On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names, `wrangler.jsonc`'s Worker name and `src/consts.ts` for the client. This route creates the project repository directly.
 
 ### Optional global skill installation
 
@@ -99,6 +101,8 @@ The installer copies the skill to your tool’s user-level skills folder and rec
 - Accessible dialog/dropdown controls with independent state and scroll locks.
 - Development console metrics, an optional FPS panel and browser checks.
 - Demo routes at `/`, `/next` and `/example-components`.
+- Cloudflare Workers Static Assets configuration for publishing through Stacki, plus Wrangler and `npm run deploy` for manual deployment.
+- A reusable Cloudflare email contact handler wired into the existing Form component, with Turnstile, validation, spam trap and rate limiting.
 
 ## Page transitions
 
@@ -178,7 +182,7 @@ With Google Chrome installed, set `PLAYWRIGHT_CHANNEL=chrome` to use it for brow
 
 ## Before shipping
 
-Set `src/consts.ts` (site name, description, canonical origin, locale). Replace the neutral demo, Lumos logos, favicon and social image. Remove example-only pages as appropriate. Configure and test a real form endpoint: the inherited form is a demonstration until an endpoint is supplied. Keep private credentials in provider-managed server secrets; this starter needs none. Static output is `dist/`, suitable for Cloudflare Pages; dynamic Astro routes require a separately configured Cloudflare adapter.
+Set `src/consts.ts` (site name, description, canonical origin, locale). Replace the neutral demo, Lumos logos, favicon and social image. Remove example-only pages as appropriate. Configure and test [contact form delivery](docs/contact-forms.md): the included handler requires client email settings, an Email Service binding and Turnstile keys. Keep the secret key in provider-managed server secrets. The inherited generic form requires an endpoint and no longer simulates success without one. Static output is `dist/`, served alongside the standalone contact Worker. Follow [Cloudflare setup](docs/cloudflare.md) to publish through Stacki and connect the domain, or choose the GitHub/terminal alternatives; server-rendered Astro routes require a separately configured Cloudflare adapter.
 
 ## Page and behaviour structure
 
@@ -196,6 +200,8 @@ To show native scrollbars throughout a site, add `data-scrollbars="visible"` to 
 
 ## Reference docs
 
+- [Cloudflare accounts, Workers deployment and domains](docs/cloudflare.md)
+- [Client contact forms and email delivery](docs/contact-forms.md)
 - [Astro structure and shared animations](docs/astro-basics.md)
 - [Motion and cleanup](docs/motion.md)
 - [Page transitions](docs/navigation.md)

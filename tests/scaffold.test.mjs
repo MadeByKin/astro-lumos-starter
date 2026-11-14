@@ -36,6 +36,21 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     );
     assert.equal(pkg.name, "client-site");
     assert.equal(lock.packages[""].name, pkg.name);
+    const worker = await readFile(path.join(target, "wrangler.jsonc"), "utf8");
+    assert.match(worker, /"name": "client-site"/);
+    assert.match(worker, /"directory": "\.\/dist"/);
+    assert.match(worker, /"html_handling": "drop-trailing-slash"/);
+    assert.match(worker, /"not_found_handling": "404-page"/);
+    assert.match(worker, /"CONTACT_ORIGIN": "https:\/\/client\.example"/);
+    assert.match(worker, /"main": "\.\/worker\/index\.mjs"/);
+    await access(path.join(target, "worker/contact.mjs"));
+    await access(path.join(target, "docs/contact-forms.md"));
+    await access(path.join(target, ".env.example"));
+    await access(path.join(target, ".dev.vars.example"));
+    assert.equal(pkg.scripts.deploy, "npm run build && wrangler deploy");
+    assert.ok(pkg.devDependencies.wrangler);
+    await access(path.join(target, "docs/cloudflare.md"));
+    assert.match(result.stdout, /docs\/cloudflare\.md/);
     assert.match(
       await readFile(path.join(target, "src/consts.ts"), "utf8"),
       /https:\/\/client\.example/,
@@ -47,6 +62,8 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
       ".stacki",
       "studio",
       ".env",
+      ".wrangler",
+      ".dev.vars",
     ]) {
       await assert.rejects(access(path.join(target, excluded)));
     }
@@ -72,6 +89,10 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     const link = path.join(folder, "source-link");
     await symlink(fileURLToPath(new URL("..", import.meta.url)), link, "dir");
     assert.notEqual(run(path.join(link, "recursive-copy")).status, 0);
+    const invalidTarget = path.join(folder, "invalid-name");
+    assert.notEqual(run(invalidTarget, `--name=${"a".repeat(64)}`).status, 0);
+    assert.notEqual(run(invalidTarget, "--name=client-").status, 0);
+    await assert.rejects(access(invalidTarget));
   } finally {
     await rm(folder, { recursive: true, force: true });
   }

@@ -32,6 +32,8 @@ Stop publication if the remote advances or diverges, authentication fails, the t
 
 Keep route-level section composition, shared attribute-driven animations/overlays, scoped cleanup, reduced motion, the trusted-origin Studio adapter, root viewport transitions and scrollbar preferences. Preserve local `astro-lumos-*` skills, their Claude links, `CLAUDE.md`, project-specific `AGENTS.md`/`LUMOS.md` rules and development-only Tick diagnostics. Optional global skill pointers stay local to each machine.
 
+Preserve the standalone contact Worker, `wrangler.jsonc` routing/bindings, Form component's optional Turnstile lifecycle and client setup documentation. Keep the email and Turnstile defaults unconfigured in the reusable starter. Upstream form replacements must retain honest failure states, server-side validation and spam verification.
+
 ## Source archive
 
 After committing a verified update:

@@ -1,0 +1,28 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/wrapper/Section.astro";
+import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
+import Form from "@/components/form/Form.astro";
+import Input from "@/components/form/Input.astro";
+import Textarea from "@/components/form/Textarea.astro";
+import Button from "@/components/Button.astro";
+---
+
+<Layout title="Contact test fixture">
+  <Section>
+    <ContentWrapper>
+      <Form name="contact-test" action="/api/contact">
+        <Input label="Name" name="name" required />
+        <Input label="Email" name="email" variant="email" required />
+        <Textarea label="Message" name="message" required />
+        <Button slot="submit" type="submit">
+          Send message
+        </Button>
+      </Form>
+      <Form name="generic-test">
+        <Input label="Name" name="name" />
+        <Button type="submit">Submit</Button>
+      </Form>
+    </ContentWrapper>
+  </Section>
+</Layout>

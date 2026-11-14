@@ -9,6 +9,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { randomInt } from "node:crypto";
 
 const source = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const [destination, ...options] = process.argv.slice(2);
@@ -35,9 +36,9 @@ try {
 const name =
   options.find((arg) => arg.startsWith("--name="))?.slice(7) ??
   path.basename(target);
-if (!/^[a-z0-9][a-z0-9-]*$/.test(name))
+if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(name) || name.length > 63)
   throw new Error(
-    "Use a lowercase project name with letters, digits and hyphens",
+    "Use a lowercase project name of at most 63 characters with letters, digits and hyphens; start and end with a letter or digit",
   );
 const site =
   options.find((arg) => arg.startsWith("--site="))?.slice(7) ??
@@ -69,6 +70,10 @@ const entries = [
   "package.json",
   "package-lock.json",
   "tsconfig.json",
+  "wrangler.jsonc",
+  ".env.example",
+  ".dev.vars.example",
+  "worker",
   "src",
   "public",
   "docs",
@@ -114,6 +119,20 @@ try {
     path.join(target, "package-lock.json"),
     JSON.stringify(lock, null, 2) + "\n",
   );
+  const workerFile = path.join(target, "wrangler.jsonc");
+  await writeFile(
+    workerFile,
+    (await readFile(workerFile, "utf8"))
+      .replace(/("name"\s*:\s*)"[^"]+"/, `$1${JSON.stringify(name)}`)
+      .replace(
+        /("CONTACT_ORIGIN"\s*:\s*)"[^"]+"/,
+        `$1${JSON.stringify(url.origin)}`,
+      )
+      .replace(
+        /("namespace_id"\s*:\s*)"[^"]+"/,
+        `$1"${randomInt(1000, 2 ** 31)}"`,
+      ),
+  );
   const constants = path.join(target, "src/consts.ts");
   await writeFile(
     constants,
@@ -128,5 +147,5 @@ try {
   throw error;
 }
 console.log(
-  `Created ${target}\nNext: cd ${JSON.stringify(target)}\nRun npm ci, then npm run dev.\nSet SITE_NAME and replace demo content before launch.`,
+  `Created ${target}\nNext: cd ${JSON.stringify(target)}\nRun npm ci, then npm run dev.\nCloudflare Worker: ${name}. Follow docs/cloudflare.md to add the Worker and publish through Stacki; GitHub and terminal deployment are alternatives.\nSet SITE_NAME and replace demo content before launch.`,
 );
