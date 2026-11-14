@@ -1,6 +1,6 @@
 # Sources and licensing
 
-Based on [Lumos for Astro](https://github.com/lumosframework/lumos-for-astro). The integrated baseline is Lumos 1.0.3, commit `9eb6523e70e49548a1e29d81ae26a5482fa0b790`, with Astro 7.4.7. The current baseline is recorded in `package.json`; see [maintenance](maintenance.md) for upgrades.
+Based on [Lumos for Astro](https://github.com/lumosframework/lumos-for-astro). The integrated baseline is Lumos 1.0.4, commit `43e4d5290fd7fa5165e2118689e680971624f0cb`, with Astro 7.4.7. The current baseline is recorded in `package.json`; see [maintenance](maintenance.md) for upgrades.
 
 The Lumos MIT license is retained in `LICENSE`. Starter additions include the shared motion runtime, scoped cleanup, demo pages, diagnostics, scaffolding, skills and checks. Lenis and GSAP are pinned dependencies with their own licenses; GSAP uses its standard license.
 

@@ -38,8 +38,8 @@
     "wrangler": "^4.162.0"
   },
   "lumos": {
-    "version": "1.0.3",
-    "commit": "9eb6523e70e49548a1e29d81ae26a5482fa0b790",
+    "version": "1.0.4",
+    "commit": "43e4d5290fd7fa5165e2118689e680971624f0cb",
     "scaffolded": "2026-11-06"
   },
   "private": true
