@@ -20,13 +20,7 @@ The user's explicit project preference takes precedence over the generic compone
 
 ## Framework releases
 
-Update the framework version in `package.json`, `package-lock.json`, and the
-style-guide badge in `src/pages/index.astro` together. The badge names the
-framework release, not the user's project version: `create-lumos` resets the
-project's `package.json.version` to `0.0.1`. Do not bind the badge to that field.
-The installer's `lumos` metadata can also be absent when GitHub's API is
-unavailable. CI runs `.github/scripts/check-starter-version.mjs` to build fresh
-sites with and without that metadata and verify their displayed release.
+The integrated Lumos version and commit live in the `lumos` field of `package.json`. Preserve that commit as the merge baseline when generating a client project. Follow the [maintenance workflow](docs/maintenance.md) when updating the framework.
 
 ## Custom components
 

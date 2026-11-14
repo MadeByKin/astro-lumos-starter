@@ -47,6 +47,14 @@ try {
   const page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(base + "/contact-test-fixture");
+  const search = page.locator('form[name="search-test"]');
+  await search.getByRole("textbox").fill("two words");
+  await search.getByRole("button").click();
+  await page.waitForURL(
+    (url) =>
+      url.pathname === "/next" && url.searchParams.get("q") === "two words",
+  );
+  await page.goto(base + "/contact-test-fixture");
   const contact = page
     .locator("lumos-form")
     .filter({ has: page.locator('form[action="/api/contact"]') })

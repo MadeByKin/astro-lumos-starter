@@ -18,8 +18,11 @@ const get = async (url) => {
   return response;
 };
 const api = "https://api.github.com/repos/lumosframework/lumos-for-astro";
+const { sha: upstreamCommit } = await (await get(`${api}/commits/main`)).json();
+if (!/^[a-f0-9]{40}$/.test(upstreamCommit || ""))
+  throw new Error("Missing upstream commit; cannot establish update status");
 const [current, base] = await Promise.all([
-  get(`${api}/git/trees/main?recursive=1`).then((r) => r.json()),
+  get(`${api}/git/trees/${upstreamCommit}?recursive=1`).then((r) => r.json()),
   get(`${api}/git/trees/${pkg.lumos.commit}?recursive=1`).then((r) => r.json()),
 ]);
 if (current.truncated || base.truncated || !current.sha || !base.sha)
@@ -27,7 +30,7 @@ if (current.truncated || base.truncated || !current.sha || !base.sha)
 const upstreamPkg = JSON.parse(
   await (
     await get(
-      `https://raw.githubusercontent.com/lumosframework/lumos-for-astro/${current.sha}/package.json`,
+      `https://raw.githubusercontent.com/lumosframework/lumos-for-astro/${upstreamCommit}/package.json`,
     )
   ).text(),
 );
@@ -46,12 +49,12 @@ const report = {
   baselineVersion: pkg.lumos.version,
   baselineCommit: pkg.lumos.commit,
   upstreamVersion: upstreamPkg.version,
-  upstreamCommit: current.sha,
-  updateAvailable: current.sha !== pkg.lumos.commit,
+  upstreamCommit,
+  updateAvailable: upstreamCommit !== pkg.lumos.commit,
   changed,
   removed,
   documentation: "https://lumosframework.com/docs/",
-  comparison: `https://github.com/lumosframework/lumos-for-astro/compare/${pkg.lumos.commit}...${current.sha}`,
+  comparison: `https://github.com/lumosframework/lumos-for-astro/compare/${pkg.lumos.commit}...${upstreamCommit}`,
   scope:
     "Upstream source check only. Read current docs/release notes and use the maintenance workflow before applying any changes.",
 };

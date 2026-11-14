@@ -93,6 +93,31 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     assert.notEqual(run(invalidTarget, `--name=${"a".repeat(64)}`).status, 0);
     assert.notEqual(run(invalidTarget, "--name=client-").status, 0);
     await assert.rejects(access(invalidTarget));
+    // Seed a disposable source with local settings as on a developer's machine.
+    await writeFile(path.join(target, ".claude/settings.local.json"), "{}");
+    await writeFile(path.join(target, "src/.env.local"), "SAMPLE=test");
+    const second = path.join(folder, "second-client");
+    const copied = spawnSync(
+      process.execPath,
+      [path.join(target, "scripts/create-project.mjs"), second],
+      { encoding: "utf8" },
+    );
+    assert.equal(copied.status, 0, copied.stderr);
+    for (const local of [".claude/settings.local.json", "src/.env.local"]) {
+      await assert.rejects(access(path.join(second, local)), {
+        code: "ENOENT",
+      });
+    }
+    const alias = path.join(folder, "client-link");
+    await symlink(target, alias, "dir");
+    const nested = spawnSync(process.execPath, [
+      path.join(target, "scripts/create-project.mjs"),
+      path.join(alias, "missing-parent", "nested-site"),
+    ]);
+    assert.notEqual(nested.status, 0);
+    await assert.rejects(access(path.join(target, "missing-parent")), {
+      code: "ENOENT",
+    });
   } finally {
     await rm(folder, { recursive: true, force: true });
   }

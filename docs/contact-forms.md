@@ -112,11 +112,11 @@ Requests asking for JSON receive `{ "ok": true|false, "message": "..." }`; nativ
 
 Keep local email bindings simulated (omit `remote: true`) unless you explicitly intend to send real test mail. Local simulation and an upload dry run do not prove domain authentication, secret setup or inbox delivery.
 
-The browser fixture uses a dummy public key and mocks both Turnstile and the contact endpoint. It builds a temporary test route and removes its source automatically, keeping the normal component library free of duplicate form sections. Build and start Wrangler in one terminal:
+The browser fixture uses a dummy public key and mocks both Turnstile and the contact endpoint. The test build injects its route directly and writes to `output/contact-fixture/`. The normal `dist/` remains ready for deployment. Build and start Wrangler in one terminal:
 
 ```sh
 npm run build:contact-fixture
-npx wrangler dev --ip 127.0.0.1 --port 8787 --local
+npx wrangler dev --assets ./output/contact-fixture --ip 127.0.0.1 --port 8787 --local
 ```
 
 In another terminal, run:
@@ -125,6 +125,6 @@ In another terminal, run:
 BASE_URL=http://127.0.0.1:8787 npm run test:contact-browser
 ```
 
-If using installed Google Chrome, add `PLAYWRIGHT_CHANNEL=chrome`. The fixture covers expiry, failure/retry, preserved input, duplicate-submit prevention, independent instances and navigation/remount cleanup. Run `npm run build` with the client's real public key after testing to remove the test route from the build output before publishing; the dummy key is only for these mocked checks. Screenshots are stored in `output/playwright/contact-*.png`.
+If using installed Google Chrome, add `PLAYWRIGHT_CHANNEL=chrome`. The fixture covers expiry, failure/retry, preserved input, duplicate-submit prevention, independent instances and navigation/remount cleanup. Screenshots are stored in `output/playwright/contact-*.png`.
 
 Email Sending is currently beta. Sends to verified destination addresses are free under the documented allowance; arbitrary-recipient sending requires Workers Paid and has its own included quota. Worker execution follows Workers pricing. Review [current Email Service pricing](https://developers.cloudflare.com/email-service/platform/pricing/) for each account. This handler sends only to the configured client inbox and does not send automatic replies to visitors.

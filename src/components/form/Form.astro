@@ -53,7 +53,7 @@ const cloudflare = action === "/api/contact";
           class="form_fields"
           name={name}
           action={action}
-          method={method}
+          method={cloudflare ? "post" : method}
           {...rest}
         >
           <Fragment set:html={content} />
@@ -156,6 +156,9 @@ const cloudflare = action === "/api/contact";
     fields.addEventListener(
       "submit",
       async (event) => {
+        // Let the browser navigate GET forms and close native dialog forms.
+        if (!cloudflare && form.dataset.endpoint && fields.method !== "post")
+          return;
         event.preventDefault();
         if (form.dataset.state === "sending") return;
         if (!ready) {

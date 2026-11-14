@@ -4,7 +4,7 @@ An Astro starter with Lumos components, Lenis smooth scrolling, GSAP animations,
 
 ## Start a project
 
-Requires Node 22.23.4+ and npm. Each client project gets its own folder and Git repository.
+Use Node 22.23.4+ and npm 9.6.5+. Create each client site in a separate folder. The generator writes the project files. Initialise Git in the new folder when you want version control.
 
 Clone the starter into a location of your choice:
 
@@ -15,7 +15,7 @@ cd astro-lumos-starter
 
 Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill-name …` in Codex or `/skill-name …` in Claude Code. Both use the same repository skills. If a skill is missing, restart your tool or ask it to read the corresponding `.agents/skills/<name>/SKILL.md`.
 
-### New Project Checklist
+### New project checklist
 
 - [ ] Choose a lowercase, hyphenated project name, a new destination folder and, if known, the live website URL. The destination must not already exist.
 - [ ] From the starter checkout, ask your assistant to generate a client project:
@@ -31,8 +31,7 @@ Open the checkout in Codex or Claude Code. In the prompts below, use `Use $skill
 
 - [ ] In Stacki, choose **Open Existing Project…** and select the generated client folder. Stacki starts the project’s development server. Open this folder rather than creating another blank Astro project. See the [Stacki quick start](https://stacki.build/docs/quick-start/).
 - [ ] Open that **same project folder** in Codex or Claude Code and start a fresh chat. Ask it to read `AGENTS.md` and `LUMOS.md` before making changes.
-- [ ] Follow [Cloudflare Workers setup](docs/cloudflare.md#publish-through-stacki-recommended) to select the Cloudflare account in Stacki, add the generated Worker name, save Publish settings and publish with **Hosting** enabled. The next publish creates the Worker. Connect the real domain when ready; GitHub builds and terminal deployment are documented alternatives.
-- [ ] For enquiries, follow [contact form setup](docs/contact-forms.md) to configure the client's sender, inbox and Turnstile keys, set `action="/api/contact"` on the existing `<Form>`, then test real delivery. The handler stays disabled until configured.
+- [ ] Verify the fresh project using the [validation commands](#validate). Run the demo browser suite before replacing the example routes and labels it exercises.
 
 ### Example interaction prompt
 
@@ -69,14 +68,14 @@ npm run new -- /absolute/path/to/client-name --name=client-name --site=https://c
 cd /absolute/path/to/client-name
 npm ci
 git init
-npm run dev
+npm run dev -- --background
 ```
 
-The generator copies source, lockfile and skills into a fresh folder, excluding dependencies, Git history, editor state and secrets. When Stacki runs the dev server, use its preview URL.
+The generator copies source, lockfile and skills into a fresh folder, excluding dependencies, Git history, editor state and secrets. Use `npm run dev -- status` to find the local URL and `npm run dev -- stop` to stop it. When Stacki starts the server, use its preview URL.
 
 ### GitHub template alternative
 
-On [MadeByKin/astro-lumos-starter](https://github.com/MadeByKin/astro-lumos-starter), choose **Use this template** to create a separate client repository, then clone the new client repository and run `npm ci`. Open that client folder in Stacki and your chosen coding tool and follow the checklist above. This route copies the instructions and skills too, but does not run our naming/origin setup: update `package.json`, the matching package-lock names, `wrangler.jsonc`'s Worker name and `src/consts.ts` for the client. This route creates the project repository directly.
+Choose **Use this template** on [GitHub](https://github.com/MadeByKin/astro-lumos-starter), then clone the new repository and run `npm ci`. This path skips the generator. Set the package name in `package.json` and both root name fields in `package-lock.json`, set `SITE_URL` in `src/consts.ts`, and set the Worker name, `CONTACT_ORIGIN` and a distinct rate-limit namespace ID in `wrangler.jsonc`. Continue from the Stacki step above.
 
 ### Optional global skill installation
 
@@ -106,63 +105,7 @@ The installer copies the skill to your tool’s user-level skills folder and rec
 
 ## Page transitions
 
-Astro ClientRouter handles internal navigation. Each page’s `BaseLayout` accepts `pageTransition="fade" | "slide" | "none"`. The effect is configured on the page, not the link: `/next` demonstrates a slide, while home and the component library currently inherit the fade default. The outgoing and incoming snapshots use their respective page settings, so mixed settings can produce different leave/enter effects.
-
-### Change the site-wide default
-
-In `src/layouts/BaseLayout.astro`, change the destructured prop default:
-
-```ts
-const {
-  theme = "inherit",
-  overlap = false,
-  pageTransition = "slide", // "fade", "slide" or "none"
-  ...seo
-} = Astro.props;
-```
-
-Pages that omit `pageTransition` inherit this default. Existing explicit overrides remain in effect; remove them if every page should follow the default. The starter currently uses a 0.2s fade and a 0.4s slide; change the `fade({ duration: "0.2s" })` or `slide({ duration: "0.4s" })` options in the same layout to adjust their timing.
-
-### Override an individual page
-
-Set the prop on that route’s layout in `src/pages/*.astro`:
-
-```astro
----
-import Layout from "@/layouts/BaseLayout.astro";
----
-
-<Layout title="About" pageTransition="slide">
-  <!-- Compose this page’s sections here. -->
-</Layout>
-```
-
-Use `pageTransition="fade"` for a crossfade or `pageTransition="none"` to disable that page’s viewport animation. Omit the prop to return to the site-wide default. `none` keeps ClientRouter navigation enabled; it is not a full browser reload. For a transition with no animation on either snapshot, both the outgoing and incoming pages must use `none`.
-
-Keep page transitions on the root viewport (`transition:name="root"`) so navigation from a scrolled position stays stable. Reduced motion disables decorative animations. See [navigation lifecycle](docs/navigation.md) for implementation details.
-
-### Example prompts for Codex and Claude Code
-
-Use these in the project checkout. In Claude Code, replace `Use $astro-lumos-interaction` with `/astro-lumos-interaction`.
-
-**Change the default transition:**
-
-```text
-Use $astro-lumos-interaction to change this site's default page transition
-from fade to slide. Keep existing page overrides.
-```
-
-To apply one effect everywhere, replace “Keep existing page overrides” with “Make every page use the new default.”
-
-**Create a custom transition for one page:**
-
-```text
-Use $astro-lumos-interaction to create a custom transition for /about:
-a short fade with a subtle upward entrance lasting 0.35s. Keep the
-current default on all other pages.
-```
-
-Replace `/about` and the motion description as needed. Custom transition values require an implementation in the layout; the built-in values are `fade`, `slide` and `none`.
+Set `pageTransition="slide"`, `"fade"` or `"none"` on a page’s `BaseLayout`. The default is a 0.2s fade. The `/next` demo uses a 0.4s slide. See [default and per-page configuration, examples and prompts](docs/navigation.md#change-the-site-wide-default).
 
 ## Validate
 
@@ -176,13 +119,16 @@ npm run preview -- --host 127.0.0.1 --port 4323
 BASE_URL=http://127.0.0.1:4323 npm run test:browser
 ```
 
-For development helpers, run `npm run dev -- --host 127.0.0.1 --port 4322`, then `BASE_URL=http://127.0.0.1:4322 npm run test:development` in another terminal.
+For development helpers, run `npm run dev -- --background --host 127.0.0.1 --port 4322`, then `BASE_URL=http://127.0.0.1:4322 npm run test:development`. Stop that server with `npm run dev -- stop`.
 
-With Google Chrome installed, set `PLAYWRIGHT_CHANNEL=chrome` to use it for browser checks. Screenshots are saved to `output/playwright/`. Review the site in a browser and Stacki alongside the automated checks.
+With Google Chrome installed, skip the Chromium download and set `PLAYWRIGHT_CHANNEL=chrome` on each browser test command. Screenshots are saved to `output/playwright/`. Review the site in a browser and Stacki alongside the automated checks.
 
 ## Before shipping
 
-Set `src/consts.ts` (site name, description, canonical origin, locale). Replace the neutral demo, Lumos logos, favicon and social image. Remove example-only pages as appropriate. Configure and test [contact form delivery](docs/contact-forms.md): the included handler requires client email settings, an Email Service binding and Turnstile keys. Keep the secret key in provider-managed server secrets. The inherited generic form requires an endpoint and no longer simulates success without one. Static output is `dist/`, served alongside the standalone contact Worker. Follow [Cloudflare setup](docs/cloudflare.md) to publish through Stacki and connect the domain, or choose the GitHub/terminal alternatives; server-rendered Astro routes require a separately configured Cloudflare adapter.
+- Set the client name, description, language and canonical origin in `src/consts.ts`. Match the final HTTPS origin in `wrangler.jsonc`.
+- Replace the logos, favicon, social image and demo content. When removing demo pages, update the header, footer and browser tests that link to them.
+- If the site accepts enquiries, configure the sender, inbox, Turnstile keys and Worker bindings. Submit from the final domain and confirm receipt and Reply-To. [Contact form setup](docs/contact-forms.md)
+- In Stacki, select the client’s Cloudflare account and Worker, save the publish settings and publish with **Hosting** enabled. Verify an inner page and the custom 404 at the deployed URL. [Cloudflare publishing and domains](docs/cloudflare.md#publish-through-stacki-recommended)
 
 ## Page and behaviour structure
 

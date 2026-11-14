@@ -1,3 +1,10 @@
 dist
 .astro
 node_modules
+.wrangler
+.stacki
+.webflow
+studio
+output
+outputs
+.lumos-upgrade

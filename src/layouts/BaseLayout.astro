@@ -8,6 +8,7 @@ import Nav from "@/components/global/Nav.astro";
 import SiteRuntime from "@/components/utility/SiteRuntime.astro";
 import Footer from "@/components/global/Footer.astro";
 import type { SeoProps } from "@/types.ts";
+import { SITE_LOCALE } from "@/consts.ts";
 
 type Props = SeoProps & {
   /** Theme for the whole page. `inherit` leaves the root defaults in place. */
@@ -38,7 +39,7 @@ const animation =
 
 <!doctype html>
 <html
-  lang="en"
+  lang={SITE_LOCALE}
   class:list={[theme !== "inherit" && `theme-${theme}`]}
   transition:name="root"
   transition:animate={animation}

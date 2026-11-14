@@ -35,7 +35,7 @@ Component-specific controls keep scripts in their owning component. Reused behav
 
 ## Routing
 
-BaseLayout uses Astro ClientRouter for same-document navigation, with fade, slide and disabled-animation options. See [navigation](navigation.md) for lifecycle details and [README examples](../README.md#page-transitions) for configuration.
+BaseLayout uses Astro ClientRouter for same-document navigation, with fade, slide and disabled-animation options. See the [navigation guide](navigation.md) for configuration examples and lifecycle details.
 
 Sources: [Astro browser scripts](https://docs.astro.build/en/guides/client-side-scripts/), [ClientRouter](https://docs.astro.build/en/guides/view-transitions/).
 

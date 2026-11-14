@@ -20,11 +20,11 @@ cd /absolute/path/to/client-site
 npm ci
 ```
 
-The generator sets the package and Worker names to `client-site`, and sets the website origin in `src/consts.ts`. Names must be lowercase letters, digits or hyphens, at most 63 characters, and begin and end with a letter or digit. Choose a distinct name for each Worker in an account.
+The generator sets the package and Worker names to `client-site`, and sets the website and contact origins in `src/consts.ts` and `wrangler.jsonc`. Names must be lowercase letters, digits or hyphens, at most 63 characters, and begin and end with a letter or digit. Choose a distinct name for each Worker in an account.
 
 The copied `wrangler.jsonc` points at `./dist` and enables the existing custom 404 page. `html_handling: "drop-trailing-slash"` preserves the starter's `/next`-style URLs instead of redirecting them to `/next/`; see [HTML handling](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/). Its compatibility date stays pinned to the tested starter date; update it deliberately alongside validation. Wrangler is a development dependency recorded in the lockfile. `npm run deploy` builds before uploading, so it does not publish an old build accidentally.
 
-If using GitHub's **Use this template** instead, update `wrangler.jsonc`'s `name`, the package names in `package.json` and `package-lock.json`, and the site constants yourself. The generator only makes those substitutions when you run it.
+If using GitHub's **Use this template** instead, update `wrangler.jsonc`'s `name`, the package names in `package.json` and `package-lock.json`, the site constants, `vars.CONTACT_ORIGIN` and a distinct `ratelimits[].namespace_id` yourself. The generator only makes those substitutions when you run it.
 
 ## Publish through Stacki (recommended)
 
@@ -46,7 +46,7 @@ You can retain your existing registrar. Add the domain to the same Cloudflare ac
 
 Once the domain is active, open your Worker and select **Settings → Domains & Routes → Add → Custom Domain**. Add the intended hostname. Cloudflare creates its DNS record and certificate; resolve any existing conflicting record deliberately when cutting over from old hosting. See [custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
 
-Choose the canonical hostname (for example `client.example`), connect any alternate hostname you need, and configure a redirect to the canonical one. Match `SITE_URL` in `src/consts.ts` to that final HTTPS origin and redeploy.
+Choose the canonical hostname (for example `client.example`), connect any alternate hostname you need, and configure a redirect to the canonical one. Set both `SITE_URL` in `src/consts.ts` and `CONTACT_ORIGIN` in `wrangler.jsonc` to that final HTTPS origin and redeploy.
 
 ## Alternative: GitHub automatic deployment
 

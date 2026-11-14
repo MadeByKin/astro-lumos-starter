@@ -5,7 +5,7 @@ export const SITE_DESCRIPTION =
   "A considered website built with Lumos and Astro.";
 /** Canonical origin. Resolves canonical URLs, social images, and the sitemap. */
 export const SITE_URL = "https://example.com";
-/** BCP 47 locale tag used to format dates and numbers. */
+/** BCP 47 document language and default formatting locale. */
 export const SITE_LOCALE = "en-GB";
 /** Routes excluded from search and the sitemap. Surrounding slashes are ignored. */
 export const NOINDEX_ROUTES: string[] = ["/404"];

@@ -56,8 +56,8 @@ if (
     "Site must be a public HTTPS origin without credentials, path, query or hash",
   );
 const entries = [
-  ".agents",
-  ".claude",
+  ".agents/skills",
+  ".claude/skills",
   ".gitignore",
   ".prettierignore",
   ".prettierrc",
@@ -80,26 +80,47 @@ const entries = [
   "scripts",
   "tests",
 ];
-await mkdir(path.dirname(target), { recursive: true });
 const canonicalSource = await realpath(source);
-const canonicalTarget = path.join(
-  await realpath(path.dirname(target)),
-  path.basename(target),
-);
+// Check the nearest existing parent before creating missing directories.
+let ancestor = path.dirname(target);
+let resolvedAncestor;
+while (!resolvedAncestor) {
+  try {
+    resolvedAncestor = await realpath(ancestor);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    ancestor = path.dirname(ancestor);
+  }
+}
 if (
-  canonicalTarget === canonicalSource ||
-  canonicalTarget.startsWith(canonicalSource + path.sep)
+  resolvedAncestor === canonicalSource ||
+  resolvedAncestor.startsWith(canonicalSource + path.sep)
 ) {
   throw new Error(
     "Choose a destination outside the starter, including through symlinks",
   );
 }
+await mkdir(path.dirname(target), { recursive: true });
 await mkdir(target); // Exclusive: a concurrent creator cannot be overwritten.
 try {
   for (const entry of entries) {
     await cp(path.join(source, entry), path.join(target, entry), {
       recursive: true,
       verbatimSymlinks: true,
+      filter: (file) => {
+        const basename = path.basename(file);
+        if (basename === ".env.example" || basename === ".dev.vars.example")
+          return true;
+        if (basename.startsWith(".env") || basename.startsWith(".dev.vars"))
+          return false;
+        return ![
+          ".DS_Store",
+          "node_modules",
+          ".git",
+          ".stacki",
+          ".wrangler",
+        ].includes(basename);
+      },
     });
   }
   const pkg = JSON.parse(
@@ -137,8 +158,8 @@ try {
   await writeFile(
     constants,
     (await readFile(constants, "utf8")).replace(
-      '"https://example.com"',
-      JSON.stringify(url.origin),
+      /export const SITE_URL = "[^"]*";/,
+      () => `export const SITE_URL = ${JSON.stringify(url.origin)};`,
     ),
   );
 } catch (error) {

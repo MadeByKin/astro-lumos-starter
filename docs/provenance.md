@@ -4,6 +4,8 @@ Based on [Lumos for Astro](https://github.com/lumosframework/lumos-for-astro). T
 
 The Lumos MIT license is retained in `LICENSE`. Starter additions include the shared motion runtime, scoped cleanup, demo pages, diagnostics, scaffolding, skills and checks. Lenis and GSAP are pinned dependencies with their own licenses; GSAP uses its standard license.
 
+The bundled Inter font ships with its [SIL Open Font License](../public/licenses/inter.txt). Astro copies this notice to `/licenses/inter.txt` in production.
+
 Implementation references:
 
 - [Lumos documentation](https://lumosframework.com/docs/)

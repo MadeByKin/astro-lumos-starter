@@ -23,6 +23,10 @@ import Button from "@/components/Button.astro";
         <Input label="Name" name="name" />
         <Button type="submit">Submit</Button>
       </Form>
+      <Form name="search-test" action="/next" method="get">
+        <Input label="Search term" name="q" />
+        <Button type="submit">Search</Button>
+      </Form>
     </ContentWrapper>
   </Section>
 </Layout>
