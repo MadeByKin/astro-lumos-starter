@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   mkdtemp,
   readFile,
+  readdir,
   writeFile,
   access,
   rm,
@@ -50,6 +51,23 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     assert.equal(pkg.scripts.deploy, "npm run build && wrangler deploy");
     assert.ok(pkg.devDependencies.wrangler);
     await access(path.join(target, "docs/cloudflare.md"));
+    assert.deepEqual(await readdir(path.join(target, ".stacki")), [
+      "styles.json",
+    ]);
+    assert.deepEqual(
+      JSON.parse(
+        await readFile(path.join(target, ".stacki/styles.json"), "utf8"),
+      ),
+      {
+        version: 1,
+        keep: [],
+        lockedStylesheets: [
+          "src/styles/patterns.css",
+          "src/styles/utilities.css",
+        ],
+      },
+    );
+
     await access(path.join(target, "src/components/media/BunnyPlayer.astro"));
     await access(
       path.join(target, "src/components/media/BunnyBackground.astro"),
@@ -68,7 +86,9 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
       "node_modules",
       "dist",
       ".git",
-      ".stacki",
+      ".stacki/publish.json",
+      ".stacki/apps",
+      ".stacki/roles.json",
       "studio",
       ".env",
       ".wrangler",

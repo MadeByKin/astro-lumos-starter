@@ -2,6 +2,14 @@
 
 Open the client project in Stacki as an existing Astro project. Components expose their props, slots and Lumos tokens for editing. Design mode pauses decorative motion; interactive preview enables the normal site behavior.
 
+## Style selector locks
+
+`.stacki/styles.json` locks `src/styles/patterns.css` and `src/styles/utilities.css`, matching the standard Lumos project. Stacki keeps every selector in those files through unused-style cleanup, including utilities that are not yet used on a page. The generator copies this tracked settings file into new projects; other local `.stacki` state, apps and publishing settings remain excluded.
+
+“Locked” means explicitly protected by this configuration. “Can’t tell” means Stacki cannot prove a selector is unused and will preserve it too. Even locked stylesheets may still appear under “Can’t tell”: the installed Stacki analyser only changes a proven-unused verdict to “Locked”; an uncertain verdict takes priority. This was confirmed in the installed editor after adding the locks. The Bunny helper fetches HLS playlist text for metadata and uses `textContent` for labels; it does not insert playlist text as HTML. A warning connecting that fetch to the slot-rendering wrappers is a conservative analysis result, not evidence of HTML injection. Adding explicit locks does not remove that warning.
+
+Keep these locks during upstream refreshes. Existing generated projects need the same settings file to gain the explicit locks; updating the starter does not change existing client projects.
+
 ## Publish to Cloudflare
 
 Publishing through Stacki is the main deployment workflow. In Publish settings, select your Cloudflare account, choose **Add Worker**, enter the generated project name and save the selected hosting destination. With **Hosting** enabled, the next publish creates the Worker using the project's Cloudflare configuration.

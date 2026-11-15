@@ -61,6 +61,7 @@ const entries = [
   ".gitignore",
   ".prettierignore",
   ".prettierrc",
+  ".stacki/styles.json",
   "AGENTS.md",
   "CLAUDE.md",
   "LUMOS.md",

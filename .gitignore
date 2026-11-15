@@ -30,7 +30,8 @@ pnpm-debug.log*
 .claude/settings.local.json
 
 # editor state and verification output
-.stacki/
+.stacki/*
+!.stacki/styles.json
 .webflow/
 studio/
 output/

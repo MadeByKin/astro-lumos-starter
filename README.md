@@ -71,7 +71,7 @@ git init
 npm run dev -- --background
 ```
 
-The generator copies source, lockfile and skills into a fresh folder, excluding dependencies, Git history, editor state and secrets. Use `npm run dev -- status` to find the local URL and `npm run dev -- stop` to stop it. When Stacki starts the server, use its preview URL.
+The generator copies source, lockfile, skills and the shared Stacki style locks into a fresh folder, excluding dependencies, Git history, local editor state and secrets. Use `npm run dev -- status` to find the local URL and `npm run dev -- stop` to stop it. When Stacki starts the server, use its preview URL.
 
 ### GitHub template alternative
 
