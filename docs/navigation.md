@@ -70,6 +70,6 @@ Replace `/about` and the motion description as needed. Custom transition values 
 - SiteRuntime releases the outgoing Lenis owner before replacement, then initializes one owner for the new page. Page-load refresh updates geometry without forcing scroll to the top; ClientRouter owns history/anchor restoration.
 - Layout's SiteRuntime is not persisted across swaps. Persisting a custom component requires an explicit state/cleanup review rather than assuming disconnect will run.
 
-Browser tests exercise same-document navigation, repeated home/next round trips, observer counts, controls after navigation, anchors/history, reduced motion and no-JavaScript fallback. Actual installed Studio acceptance remains a separate check.
+Browser tests exercise same-document navigation, repeated home/component-library round trips, observer counts, controls after navigation, anchors/history, reduced motion and no-JavaScript fallback. Actual installed Studio acceptance remains a separate check.
 
 Source: [Astro view transitions and lifecycle](https://docs.astro.build/en/guides/view-transitions/).

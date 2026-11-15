@@ -34,7 +34,7 @@ A trusted integration can also pause decorative motion with `document.documentEl
 ## Check inside your installed editor
 
 1. Switch between design and interactive modes. Confirm reveals rest in place, autoplay pauses and Lenis stops in design mode.
-2. Edit reveal attributes and the HeroIntro title prop. Confirm changes save to the intended source.
+2. Edit reveal attributes and the home page Heading text. Confirm changes save to the intended source.
 3. Insert, duplicate and remove animated elements and controls. Confirm instances work independently and deleting an open modal releases its scroll lock.
 4. Edit component content and switch preview modes repeatedly. Confirm behavior reinitializes and design-mode styles reset.
 5. Create a page and check the saved route, navigation link and responsive layout. Available page/layout editing depends on the editor version and project configuration.

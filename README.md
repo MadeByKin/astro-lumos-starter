@@ -132,7 +132,7 @@ With Google Chrome installed, skip the Chromium download and set `PLAYWRIGHT_CHA
 
 ## Page and behaviour structure
 
-Compose sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Smaller components own their content, styles or specific interactions; see `index.astro`, `HeroIntro.astro` and `PrincipleCard.astro`. Shared animations and overlays live in `src/scripts/` and use explicit data attributes. See [Astro structure](docs/astro-basics.md) and [motion ownership](docs/motion.md).
+Compose sections directly in `src/pages/*.astro` with Section, ContentWrapper and Grid. Smaller components own their content, styles or specific interactions; see the home page composition in `src/pages/index.astro`. Shared animations and overlays live in `src/scripts/` and use explicit data attributes. See [Astro structure](docs/astro-basics.md) and [motion ownership](docs/motion.md).
 
 ## Console timing
 

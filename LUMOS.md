@@ -90,4 +90,4 @@ Every box has to be ticked before a component is done.
 
 ## This starter: visible page composition
 
-Page route files own their Section/ContentWrapper/Grid composition. Extract only useful content or interaction boundaries, not a whole ordinary page. The current index.astro demonstrates this with small HeroIntro and PrincipleCard content components. Shared overlay behavior is loaded once by site.ts from overlays.ts; Modal/Dropdown components supply their semantic markup and attributes. This project preference and the existing shared-animation preference must survive framework updates.
+Page route files own their Section/ContentWrapper/Grid composition. Extract only useful content or interaction boundaries, not a whole ordinary page. The current index.astro demonstrates this with a Section containing a ContentWrapper, Heading, Paragraph and ButtonWrapper with a Button. Shared overlay behavior is loaded once by site.ts from overlays.ts; Modal/Dropdown components supply their semantic markup and attributes. This project preference and the existing shared-animation preference must survive framework updates.

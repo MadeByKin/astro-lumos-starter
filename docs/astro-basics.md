@@ -22,7 +22,7 @@ Distance and duration attributes are optional; the defaults are 1.5rem and 0.7 s
 
 ## Trace the animation
 
-1. The page and HeroIntro/PrincipleCard content components render `data-reveal="up"` on the title and selected cards/headings.
+1. The Heading in `src/pages/index.astro` sets `data-reveal="up"` on the home page title.
 2. SiteRuntime imports the shared `src/scripts/site.ts` entry point.
 3. That calls `installReveals` from `src/scripts/reveals.ts` once per document.
 4. The scanner selects only `[data-reveal]`, creates an instance Scope and a GSAP context for each marked element, and observes the motion policy.
@@ -41,4 +41,4 @@ Sources: [Astro browser scripts](https://docs.astro.build/en/guides/client-side-
 
 ## Page composition
 
-`src/pages/index.astro` directly composes its Sections, ContentWrappers and Grid. HeroIntro owns a small styled content block; PrincipleCard owns a card's markup/styles. The page uses the existing Modal component; its controller is shared in src/scripts/overlays.ts.
+`src/pages/index.astro` composes a Section with a ContentWrapper. The Heading, Paragraph and ButtonWrapper live directly inside that wrapper. Edit the Button’s text and `href` to change the link to the component examples. Modal examples live in `src/pages/example-components.astro`.

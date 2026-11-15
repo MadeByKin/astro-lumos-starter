@@ -96,11 +96,20 @@ try {
     await page.evaluate(() => window.tick.getAnimationMetrics().sampleCount),
     samples,
   );
-  await page.getByRole("link", { name: "Try a page transition" }).click();
-  await page.waitForURL("**/next");
+  await page
+    .locator("main")
+    .getByRole("link", { name: "Example components" })
+    .click();
+  await page.waitForURL("**/example-components");
   assert.equal(await page.evaluate(() => typeof window.tick.add), "function");
-  await page.getByRole("link", { name: "Return to the demo" }).click();
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Home", exact: true })
+    .click();
   await page.waitForURL(base + "/");
+  await page
+    .getByRole("heading", { name: "A considered starting point." })
+    .waitFor();
   await page.keyboard.press("Shift+F");
   await page.locator("[data-motion-diagnostics]").waitFor();
   await page.waitForFunction(() =>

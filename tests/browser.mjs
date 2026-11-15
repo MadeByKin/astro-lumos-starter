@@ -94,22 +94,12 @@ try {
     path: fileURLToPath(new URL("desktop.png", output)),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Test the dialog" }).click();
-  assert.equal(await page.locator("dialog").evaluate((el) => el.open), true);
-  assert.equal(
-    await page.evaluate(() => document.documentElement.style.overflow),
-    "hidden",
-  );
-  await page.keyboard.press("Escape");
-  await page.waitForFunction(
-    () => document.documentElement.style.overflow !== "hidden",
-  );
-  assert.equal(
-    await page
-      .locator("[data-open-dialog]")
-      .evaluate((el) => el === document.activeElement),
-    true,
-  );
+  const examplesLink = page
+    .locator("main")
+    .getByRole("link", { name: "Example components", exact: true });
+  assert.equal(await examplesLink.getAttribute("href"), "/example-components");
+  assert.equal(await page.locator("main section").count(), 1);
+  assert.equal(await page.locator("main dialog").count(), 0);
 
   for (let i = 0; i < 3; i++) {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -120,11 +110,9 @@ try {
       ).transform;
       return value === "none" || value === "matrix(1, 0, 0, 1, 0, 0)";
     });
-    const gap = await page.locator(".hero_intro_wrap").evaluate((el) => {
-      const heading = el.querySelector("[data-reveal]").getBoundingClientRect();
-      const paragraph = el
-        .querySelector("[data-reveal]")
-        .nextElementSibling.getBoundingClientRect();
+    const gap = await page.getByRole("heading", { level: 1 }).evaluate((el) => {
+      const heading = el.getBoundingClientRect();
+      const paragraph = el.nextElementSibling.getBoundingClientRect();
       return paragraph.top - heading.bottom;
     });
     assert.ok(
@@ -158,17 +146,6 @@ try {
       ),
   );
   const observerBaseline = await page.evaluate(() => window.__observers.size);
-  // Runtime disconnect/reconnect, including overlay cleanup, must leave no scroll lock.
-  await page.getByRole("button", { name: "Test the dialog" }).click();
-  await page.evaluate(() => {
-    const el = document.querySelector("lumos-modal");
-    el.remove();
-    document.querySelector("main").append(el);
-  });
-  await page.waitForFunction(
-    () => document.documentElement.style.overflow !== "hidden",
-  );
-  assert.equal(await page.locator("dialog").evaluate((el) => el.open), false);
   for (let i = 0; i < 10; i++) {
     await page.evaluate(() => {
       const root = document.querySelector("main");
@@ -187,26 +164,13 @@ try {
   await page.evaluate(() => {
     window.__oldDocument = true;
   });
-  await page.getByRole("link", { name: "Try a page transition" }).click();
-  await page.waitForURL("**/next");
+  await examplesLink.click();
+  await page.waitForURL("**/example-components");
   await smooth();
   assert.equal(
     await page.evaluate(() => window.__oldDocument),
     true,
     "ClientRouter preserves the document",
-  );
-  assert.equal(
-    await page.locator("main").getAttribute("data-page-transition"),
-    "slide",
-  );
-  await page.goBack();
-  await smooth();
-  await page.locator("[data-open-dialog]").waitFor();
-  await page.evaluate(
-    () =>
-      new Promise((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve)),
-      ),
   );
   // Navigate from a scrolled position without Playwright scrolling the link into view.
   await page.evaluate(() => {
@@ -239,6 +203,10 @@ try {
   const savedScroll = await page.evaluate(() => scrollY);
   await page.evaluate(() => document.querySelector('a[href="/next"]').click());
   await page.waitForURL("**/next");
+  assert.equal(
+    await page.locator("main").getAttribute("data-page-transition"),
+    "slide",
+  );
   await page.waitForFunction(() => window.__transitionSamples.length > 0);
   assert.equal(
     await page.evaluate(() => window.__transitionScroll),
@@ -266,14 +234,17 @@ try {
     (saved) => Math.abs(scrollY - saved) < 2,
     savedScroll,
   );
+  await page.goBack();
+  await examplesLink.waitFor();
+  await smooth();
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.waitForFunction(() => scrollY === 0);
   const navigationBaseline = await page.evaluate(() => window.__observers.size);
   for (let visit = 0; visit < 4; visit++) {
-    await page.getByRole("link", { name: "Try a page transition" }).click();
-    await page.waitForURL("**/next");
+    await examplesLink.click();
+    await page.waitForURL("**/example-components");
     await smooth();
-    await page.getByRole("link", { name: "Return to the demo" }).click();
+    await page.goBack();
     await page.waitForURL(base + "/");
     await smooth();
     await page.evaluate(
@@ -310,25 +281,24 @@ try {
     document.documentElement.dataset.motion = "off";
   });
   await smooth(false);
-  await page.getByRole("link", { name: "Try a page transition" }).click();
-  await page.waitForURL("**/next");
+  await examplesLink.click();
+  await page.waitForURL("**/example-components");
   await smooth(false);
   assert.equal(
     await page.evaluate(() => document.documentElement.dataset.motion),
     "off",
   );
-  await page.getByRole("link", { name: "Return to the demo" }).click();
+  await page.goBack();
   await page.waitForURL(base + "/");
   await page.evaluate(() => {
     delete document.documentElement.dataset.motion;
   });
   await smooth();
 
-  await page.getByRole("link", { name: "Explore the foundation" }).click();
-  assert.equal(new URL(page.url()).hash, "#principles");
   await page.goto(base);
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
+  assert.equal(new URL(page.url()).hash, "#main");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "main");
 
   await page.evaluate(() =>
@@ -361,6 +331,25 @@ try {
     "Library scripts initialize on a first ClientRouter visit",
   );
   await smooth();
+  const modalTrigger = page.locator('[data-modal-open="modal-small"]');
+  await modalTrigger.click();
+  assert.equal(
+    await page.locator("#modal-small").evaluate((el) => el.open),
+    true,
+  );
+  assert.equal(
+    await page.evaluate(() => document.documentElement.style.overflow),
+    "hidden",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => document.documentElement.style.overflow !== "hidden",
+  );
+  assert.equal(
+    await modalTrigger.evaluate((el) => el === document.activeElement),
+    true,
+  );
+
   await page.evaluate(() => {
     for (const id of ["modal-small", "modal-side"]) {
       const trigger = document.createElement("button");
@@ -381,6 +370,10 @@ try {
     await page.evaluate(() => document.documentElement.style.overflow),
     "hidden",
     "Second modal retains its scroll lock",
+  );
+  assert.equal(
+    await page.locator("#modal-small").evaluate((el) => el.open),
+    false,
   );
   await page.evaluate(() => document.querySelector("#modal-side").close());
   await page.waitForFunction(
@@ -489,8 +482,11 @@ try {
     await staticPage.getByRole("heading", { level: 1 }).isVisible(),
     true,
   );
-  await staticPage.getByRole("link", { name: "Try a page transition" }).click();
-  await staticPage.waitForURL("**/next");
+  await staticPage
+    .locator("main")
+    .getByRole("link", { name: "Example components" })
+    .click();
+  await staticPage.waitForURL("**/example-components");
   await plain.close();
 
   console.log("PASS: mobile and no-JS");
@@ -514,7 +510,7 @@ try {
   const frame = await (
     await page.locator("iframe").elementHandle()
   ).contentFrame();
-  await frame.waitForSelector(".hero_intro_wrap");
+  await frame.getByRole("heading", { level: 1 }).waitFor();
   await smooth(false, frame);
   await frame.waitForFunction(
     () => document.documentElement.dataset.studioEditing === "true",

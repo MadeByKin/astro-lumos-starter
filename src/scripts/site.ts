@@ -4,7 +4,6 @@ import { connectStudio } from "@/lib/motion/studio";
 import { startScroll } from "@/lib/motion/scroll";
 import { installReveals } from "./reveals";
 import { installOverlays } from "./overlays";
-import { observeMotion } from "@/lib/motion/policy";
 
 // One processed entry point for shared attribute-driven effects and site services.
 const lifetime = new Scope();
@@ -13,13 +12,6 @@ defineBehaviour(
   (_element, scope) => {
     connectStudio(scope);
     startScroll(scope);
-    observeMotion(scope, (allowed) => {
-      document.querySelectorAll("[data-motion-status]").forEach((element) => {
-        element.textContent = allowed
-          ? "Motion enabled · Lenis + GSAP"
-          : "Motion paused · native scrolling";
-      });
-    });
   },
   { refreshOnContent: false },
 );
