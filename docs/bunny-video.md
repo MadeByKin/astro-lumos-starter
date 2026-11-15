@@ -47,7 +47,7 @@ import BunnyBackground from "@/components/media/BunnyBackground.astro";
 </div>
 ```
 
-The background fills its positioned parent, inherits its corner radius and crops with `object-fit: cover`. Give the parent a height or aspect ratio. It loops muted and includes a pause/play button. Keep decorative video out of the accessibility tree; the wrapper and button remain labelled. Position overlaid content so it does not cover the pause button at the bottom inline-end corner.
+The background fills its positioned parent, inherits its corner radius and crops with `object-fit: cover`. Give the parent a height or aspect ratio. It loops muted and includes a pause/play button by default. Set `controls={false}` on `BunnyBackground` to omit that button for an individual instance. With controls hidden, reduced motion or blocked autoplay leaves the poster visible; `autoplay={false}` also leaves it static. Keep decorative video out of the accessibility tree; the wrapper and button remain labelled. Position overlaid content so it does not cover the pause button at the bottom inline-end corner.
 
 ## Props and loading
 
@@ -60,7 +60,7 @@ Both components accept `render`, `src`, `poster`, `label`, `autoplay`, `lazy`, u
 
 Native HLS is preferred where supported. Other supported browsers load the locked npm `hls.js` dependency on demand; pages without these components do not download that library. Each instance owns and releases its media, requests, observers, handlers and timers across navigation and editor remounts.
 
-Blocked autoplay leaves a play control available. Fatal loading/playback failures show Retry; metadata-only failures do not prevent a later playback attempt. Without JavaScript, the poster and an Open video link remain available; opening an HLS URL depends on the browser's native support.
+Blocked autoplay leaves a play control available when controls are enabled. Fatal loading/playback failures show Retry; metadata-only failures do not prevent a later playback attempt. Without JavaScript, the poster and an Open video link remain available; opening an HLS URL depends on the browser's native support.
 
 The component showcase uses external demonstration assets supplied with the Osmo resources. Replace those URLs before publishing a client project. No Bunny configuration, credentials or deployment changes are made by adding these components.
 
