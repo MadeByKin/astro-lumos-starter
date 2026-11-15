@@ -28,7 +28,8 @@ import Slider from "@/components/interactive/Slider.astro";
 import Accordion from "@/components/interactive/Accordion.astro";
 import Marquee from "@/components/interactive/Marquee.astro";
 import AccordionItem from "@/components/interactive/AccordionItem.astro";
-import Video from "@/components/media/Video.astro";
+import BunnyBackground from "@/components/media/BunnyBackground.astro";
+import BunnyPlayer from "@/components/media/BunnyPlayer.astro";
 import Icon from "@/components/media/Icon.astro";
 import RichText from "@/components/typography/RichText.astro";
 import arrow from "@/assets/icons/arrow.svg";
@@ -752,23 +753,46 @@ const lorem =
       </ButtonWrapper>
     </ContentWrapper>
   </Section>
-  <!-- video -->
+  <!-- bunny HLS player -->
   <Section paddingTop="small" paddingBottom="small">
     <ContentWrapper>
-      <Eyebrow>video</Eyebrow>
-      <Heading tag="h2" variant="h3" maxWidth={17}>
-        {heading}
+      <Eyebrow>Bunny HLS player</Eyebrow>
+      <Heading tag="h2" variant="h3">
+        Video with custom controls
       </Heading>
-      <Paragraph maxWidth={36}>{text}</Paragraph>
-      <Video
-        src="https://timothyricks.us.getafile.online/background-video"
-        variant="16-9"
-        loop={true}
-        autoplay={false}
-        controls
-        muted={true}
+      <Paragraph maxWidth={36}>
+        Bunny Stream playback with seeking, mute and fullscreen. Replace this
+        Osmo sample stream and poster with your own assets.
+      </Paragraph>
+      <BunnyPlayer
+        src="https://vz-6ed806ff-5e5.b-cdn.net/b6a663de-07c1-4c37-8bb6-0e79fef7fb3c/playlist.m3u8"
+        poster="https://cdn.prod.website-files.com/68d1624803866689f970e4b1/68d165db0007459a86b6cfd9_player-placeholder.jpg"
+        label="Osmo sample video"
         slot="column2"
       />
+    </ContentWrapper>
+  </Section>
+  <!-- bunny HLS background -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>Bunny HLS background</Eyebrow>
+      <Heading tag="h2" variant="h3">
+        Motion behind your content
+      </Heading>
+      <Paragraph maxWidth={36}>
+        Muted looping playback pauses outside the viewport and follows motion
+        preferences. Replace the sample assets before publishing a client site.
+      </Paragraph>
+      <div
+        class="position-relative width-full ratio-16-9 radius-main"
+        slot="column2"
+      >
+        <BunnyBackground
+          src="https://vz-6ed806ff-5e5.b-cdn.net/b6a663de-07c1-4c37-8bb6-0e79fef7fb3c/playlist.m3u8"
+          poster="https://cdn.prod.website-files.com/68d1624803866689f970e4b1/68d165db0007459a86b6cfd9_player-placeholder.jpg"
+          label="Osmo sample background video"
+        />
+      </div>
     </ContentWrapper>
   </Section>
   <!-- rich-text -->

@@ -1,0 +1,138 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import BunnyButton from "./BunnyButton.astro";
+interface Props extends Omit<HTMLAttributes<"div">, "src"> {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** HLS playlist URL. Omit to render nothing. */
+  src?: string;
+  /** Poster image URL. */
+  poster?: string;
+  /** Accessible label. */
+  label?: string;
+  /** Start automatically when visible and motion is allowed. */
+  autoplay?: boolean;
+  /** Defer stream loading until playback is requested. */
+  lazy?: boolean;
+}
+const {
+  render = true,
+  src,
+  poster,
+  label = "Background video",
+  autoplay = true,
+  lazy = true,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+{render && src && (
+  <bunny-background style="display: contents">
+    <div
+      {...rest}
+      class:list={["bunny-background_wrap", className]}
+      role="group"
+      aria-label={label}
+      data-bunny-background-init
+      data-player-src={src}
+      data-player-autoplay={String(autoplay)}
+      data-player-lazy={String(lazy)}
+      data-player-muted="true"
+      data-player-status="idle"
+      data-player-activated="false"
+    >
+      <video
+        class="bunny-background_video"
+        poster={poster}
+        preload="none"
+        playsinline
+        muted
+        aria-hidden="true"
+      />
+      <div class="bunny-background_controls">
+        <BunnyButton control="playpause" label="Play video" />
+      </div>
+      <span class="bunny-background_loading" role="status">
+        Loading video…
+      </span>
+      <div class="bunny-background_error" role="status">
+        <span>Video unavailable.</span>
+        <button type="button" data-player-control="retry">
+          Retry video
+        </button>
+      </div>
+      <noscript>
+        <a class="bunny-background_fallback" href={src}>
+          Open video
+        </a>
+      </noscript>
+    </div>
+  </bunny-background>
+)}
+<script>
+  import { defineBehaviour } from "@/lib/motion/scope";
+  import { setupBunny } from "@/lib/media/bunny";
+  defineBehaviour("bunny-background", (element, scope) => {
+    const root = element.querySelector<HTMLElement>(
+      "[data-bunny-background-init]",
+    );
+    if (root) setupBunny(root, scope, true);
+  });
+</script>
+<style is:global>
+  @layer components {
+    .bunny-background_wrap {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      isolation: isolate;
+      overflow: hidden;
+      border-radius: inherit;
+      background: var(--dark-900);
+      color: var(--light-100);
+      pointer-events: none;
+    }
+    .bunny-background_video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .bunny-background_controls {
+      display: none;
+      position: absolute;
+      inset-inline-end: var(--space-4);
+      bottom: var(--space-4);
+      pointer-events: auto;
+    }
+    .bunny-background_loading,
+    .bunny-background_error {
+      display: none;
+      position: absolute;
+      inset: 0;
+      place-content: center;
+      justify-items: center;
+      gap: var(--space-3);
+      background: color-mix(in srgb, var(--dark-900) 70%, transparent);
+    }
+    .bunny-background_error button {
+      pointer-events: auto;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .bunny-background_fallback {
+      position: absolute;
+      inset: auto auto var(--space-4) var(--space-4);
+      pointer-events: auto;
+    }
+    .bunny-background_wrap[data-player-enhanced] .bunny-background_controls {
+      display: block;
+    }
+    .bunny-background_wrap[data-player-status="loading"]
+      .bunny-background_loading,
+    .bunny-background_wrap[data-player-status="error"] .bunny-background_error {
+      display: grid;
+    }
+  }
+</style>

@@ -1,0 +1,452 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { BunnySizing, BunnyRatio } from "@/lib/media/bunny";
+import BunnyButton from "./BunnyButton.astro";
+type Head = Omit<HTMLAttributes<"div">, "src"> & {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** HLS playlist URL. Omit to render nothing. */
+  src?: string;
+  /** Poster image URL. */
+  poster?: string;
+  /** Accessible label. */
+  label?: string;
+};
+type Settings = {
+  /** Start automatically when visible and motion is allowed. Enables muted looping playback. */
+  autoplay?: boolean;
+  /** Mute audio. */
+  muted?: boolean;
+  /** Defer loading until play, preload metadata only, or attach immediately. */
+  lazy?: boolean | "meta";
+};
+type Props = Head & BunnySizing & Settings;
+type AllProps = Head &
+  Settings & {
+    variant?: BunnyRatio | "custom" | "auto" | "cover";
+    ratio?: string;
+  };
+const {
+  render = true,
+  src,
+  poster,
+  label = "Video player",
+  variant = "16-9",
+  ratio,
+  autoplay = false,
+  muted = false,
+  lazy = "meta",
+  class: className,
+  ...rest
+} = Astro.props as AllProps;
+const aspect =
+  variant === "custom"
+    ? ratio
+    : variant === "auto" || variant === "cover"
+      ? "16 / 9"
+      : variant.replace("-", " / ");
+---
+
+{render && src && (
+  <bunny-player style="display: contents">
+    <div
+      {...rest}
+      class:list={["bunny-player_wrap", variant, className]}
+      style={`aspect-ratio: ${aspect};`}
+      role="group"
+      aria-label={label}
+      data-bunny-player-init
+      data-player-src={src}
+      data-player-autoplay={String(autoplay)}
+      data-player-muted={String(muted || autoplay)}
+      data-player-lazy={String(lazy)}
+      data-player-update-size={
+        variant === "auto" ? "true" : variant === "cover" ? "cover" : "false"
+      }
+      data-player-status="idle"
+      data-player-activated="false"
+      data-player-fullscreen="false"
+      data-player-hover="active"
+      data-timeline-drag="false"
+    >
+      <div data-player-before></div>
+      <video
+        class="bunny-player_video"
+        poster={poster}
+        preload="none"
+        playsinline
+        aria-label={label}
+      >
+        <slot name="tracks" />
+      </video>
+      <button
+        type="button"
+        class="bunny-player_start"
+        data-player-control="play"
+        aria-label="Play video"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5v14l11-7Z" fill="currentColor" />
+        </svg>
+      </button>
+      <div class="bunny-player_interface">
+        <BunnyButton control="playpause" label="Play video" />
+        <div class="bunny-player_time">
+          <span data-player-time-progress>00:00</span>
+          <span aria-hidden="true"> / </span>
+          <span data-player-time-duration>00:00</span>
+        </div>
+        <div class="bunny-player_timeline" data-player-timeline>
+          <div class="bunny-player_buffered" data-player-buffered></div>
+          <div class="bunny-player_progress" data-player-progress></div>
+          <input
+            class="bunny-player_seek"
+            data-player-timeline-handle
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            aria-label="Seek video"
+            aria-valuetext="00:00"
+            disabled
+          />
+        </div>
+        <BunnyButton control="mute" label="Mute video" />
+        <BunnyButton control="fullscreen" label="Enter fullscreen" />
+      </div>
+      <span class="bunny-player_loading" role="status">
+        Loading video…
+      </span>
+      <div class="bunny-player_error" role="status">
+        <span>Video unavailable.</span>
+        <button type="button" data-player-control="retry">
+          Retry video
+        </button>
+      </div>
+      <noscript>
+        <a class="bunny-player_fallback" href={src}>
+          Open video
+        </a>
+      </noscript>
+    </div>
+  </bunny-player>
+)}
+<script>
+  import { defineBehaviour } from "@/lib/motion/scope";
+  import { formatTime, setupBunny } from "@/lib/media/bunny";
+  defineBehaviour("bunny-player", (element, scope) => {
+    const root = element.querySelector<HTMLElement>("[data-bunny-player-init]");
+    if (!root) return;
+    const { video, play, wake } = setupBunny(root, scope);
+    const seek = root.querySelector<HTMLInputElement>(
+      "[data-player-timeline-handle]",
+    )!;
+    const progress = root.querySelector<HTMLElement>("[data-player-progress]")!;
+    const buffered = root.querySelector<HTMLElement>("[data-player-buffered]")!;
+    const options = { signal: scope.signal };
+    let dragging = false;
+    let resume = false;
+    const update = () => {
+      const valid = Number.isFinite(video.duration) && video.duration > 0;
+      seek.disabled = !valid;
+      if (!dragging) {
+        const percent = valid
+          ? Math.min(100, (video.currentTime / video.duration) * 100)
+          : 0;
+        seek.value = String(percent);
+        progress.style.width = `${percent}%`;
+        root.querySelector("[data-player-time-progress]")!.textContent =
+          formatTime(video.currentTime);
+      }
+      seek.setAttribute(
+        "aria-valuetext",
+        `${formatTime(video.currentTime)} of ${formatTime(video.duration)}`,
+      );
+      if (valid)
+        root.querySelector("[data-player-time-duration]")!.textContent =
+          formatTime(video.duration);
+      buffered.style.width =
+        valid && video.buffered.length
+          ? `${Math.min(100, (video.buffered.end(video.buffered.length - 1) / video.duration) * 100)}%`
+          : "0%";
+      if (
+        root.dataset.playerUpdateSize === "true" &&
+        video.videoWidth &&
+        video.videoHeight
+      )
+        root.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+    };
+    for (const event of [
+      "timeupdate",
+      "durationchange",
+      "loadedmetadata",
+      "progress",
+      "seeked",
+      "emptied",
+    ])
+      video.addEventListener(event, update, options);
+    const finish = () => {
+      if (!dragging) return;
+      dragging = false;
+      root.dataset.timelineDrag = "false";
+      if (resume) void play();
+      resume = false;
+      update();
+    };
+    seek.addEventListener(
+      "pointerdown",
+      () => {
+        dragging = true;
+        resume = !video.paused;
+        video.pause();
+        root.dataset.timelineDrag = "true";
+      },
+      options,
+    );
+    seek.addEventListener(
+      "input",
+      () => {
+        if (!Number.isFinite(video.duration)) return;
+        video.currentTime = (Number(seek.value) / 100) * video.duration;
+        progress.style.width = `${seek.value}%`;
+        root.querySelector("[data-player-time-progress]")!.textContent =
+          formatTime(video.currentTime);
+        seek.setAttribute(
+          "aria-valuetext",
+          `${formatTime(video.currentTime)} of ${formatTime(video.duration)}`,
+        );
+        wake();
+      },
+      options,
+    );
+    for (const event of ["pointerup", "pointercancel"])
+      window.addEventListener(event, finish, options);
+    seek.addEventListener("blur", finish, options);
+    const nativeVideo = video as HTMLVideoElement & {
+      webkitEnterFullscreen?: () => void;
+      webkitExitFullscreen?: () => void;
+      webkitDisplayingFullscreen?: boolean;
+    };
+    const syncFullscreen = () => {
+      const active =
+        document.fullscreenElement === root ||
+        Boolean(nativeVideo.webkitDisplayingFullscreen);
+      root.dataset.playerFullscreen = String(active);
+      root
+        .querySelector('[data-player-control="fullscreen"]')
+        ?.setAttribute(
+          "aria-label",
+          active ? "Exit fullscreen" : "Enter fullscreen",
+        );
+      wake();
+    };
+    root.querySelector('[data-player-control="fullscreen"]')!.addEventListener(
+      "click",
+      async () => {
+        try {
+          if (document.fullscreenElement === root)
+            await document.exitFullscreen();
+          else if (nativeVideo.webkitDisplayingFullscreen)
+            nativeVideo.webkitExitFullscreen?.();
+          else if (root.requestFullscreen) await root.requestFullscreen();
+          else nativeVideo.webkitEnterFullscreen?.();
+        } catch {}
+        syncFullscreen();
+      },
+      options,
+    );
+    document.addEventListener("fullscreenchange", syncFullscreen, options);
+    video.addEventListener("webkitbeginfullscreen", syncFullscreen, options);
+    video.addEventListener("webkitendfullscreen", syncFullscreen, options);
+    scope.defer(() => {
+      if (document.fullscreenElement === root)
+        void document.exitFullscreen().catch(() => {});
+      root.dataset.playerFullscreen = "false";
+      root.dataset.timelineDrag = "false";
+    });
+    update();
+  });
+</script>
+<style is:global>
+  @layer components {
+    .bunny-player_wrap {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      overflow: hidden;
+      border-radius: var(--radius-main);
+      color: var(--light-100);
+      background: var(--dark-900);
+      &.cover {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        aspect-ratio: auto !important;
+      }
+      &:fullscreen {
+        border-radius: 0;
+        height: 100%;
+      }
+    }
+    .bunny-player_video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .bunny-player_wrap:fullscreen .bunny-player_video {
+      object-fit: contain;
+    }
+    .bunny-player_start {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 4rem;
+      height: 4rem;
+      margin: auto;
+      padding: 1rem;
+      border-radius: var(--radius-round);
+      background: var(--brand-500);
+      color: var(--brand-text);
+      cursor: pointer;
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .bunny-player_interface {
+      display: none;
+      position: absolute;
+      inset: auto 0 0;
+      padding: var(--space-3);
+      gap: var(--space-2);
+      align-items: center;
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      background: linear-gradient(
+        transparent,
+        color-mix(in srgb, var(--dark-900) 95%, transparent)
+      );
+      transition: opacity var(--hover-duration) var(--hover-ease);
+      @media (width >= 30rem) {
+        grid-template-columns: auto auto minmax(3rem, 1fr) auto auto;
+      }
+    }
+    .bunny-player_time {
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .bunny-player_timeline {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      min-width: 0;
+      @media (width >= 30rem) {
+        grid-column: 3;
+      }
+      height: 1.5rem;
+      position: relative;
+    }
+    .bunny-player_timeline::before,
+    .bunny-player_buffered,
+    .bunny-player_progress {
+      position: absolute;
+      inset: 0 auto 0 0;
+      margin-block: auto;
+      height: 0.25rem;
+      border-radius: var(--radius-round);
+      pointer-events: none;
+    }
+    .bunny-player_timeline::before {
+      content: "";
+      width: 100%;
+      background: var(--dark-700);
+    }
+    .bunny-player_buffered {
+      width: 0;
+      background: var(--light-300);
+    }
+    .bunny-player_progress {
+      width: 0;
+      background: var(--brand-500);
+    }
+    .bunny-player_seek {
+      appearance: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+      &::-webkit-slider-thumb {
+        appearance: none;
+        width: 0.875rem;
+        height: 0.875rem;
+        border-radius: var(--radius-round);
+        background: var(--brand-500);
+      }
+      &::-moz-range-thumb {
+        width: 0.875rem;
+        height: 0.875rem;
+        border: 0;
+        border-radius: var(--radius-round);
+        background: var(--brand-500);
+      }
+    }
+    .bunny-player_start:focus-visible,
+    .bunny-player_seek:focus-visible {
+      outline: var(--focus-width) solid var(--brand-500);
+      outline-offset: var(--focus-offset);
+    }
+    .bunny-player_loading,
+    .bunny-player_error {
+      display: none;
+      position: absolute;
+      inset: 0 0 4rem;
+      place-content: center;
+      justify-items: center;
+      gap: var(--space-3);
+      pointer-events: none;
+      background: color-mix(in srgb, var(--dark-900) 70%, transparent);
+    }
+    .bunny-player_error button {
+      pointer-events: auto;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .bunny-player_fallback {
+      position: absolute;
+      inset: auto auto var(--space-4) var(--space-4);
+    }
+    .bunny-player_wrap[data-player-enhanced] {
+      .bunny-player_interface {
+        display: grid;
+      }
+      &:not([data-player-activated="true"]):not(
+          [data-player-status="loading"]
+        ):not([data-player-status="error"])
+        .bunny-player_start {
+        display: block;
+      }
+      &[data-player-status="playing"][data-player-hover="idle"]:not(
+          :focus-within
+        ):not([data-timeline-drag="true"])
+        .bunny-player_interface {
+        opacity: 0;
+        pointer-events: none;
+      }
+      &[data-player-status="loading"] .bunny-player_loading,
+      &[data-player-status="error"] .bunny-player_error {
+        display: grid;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bunny-player_interface {
+        transition: none;
+      }
+    }
+  }
+</style>

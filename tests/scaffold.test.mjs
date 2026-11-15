@@ -50,6 +50,15 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
     assert.equal(pkg.scripts.deploy, "npm run build && wrangler deploy");
     assert.ok(pkg.devDependencies.wrangler);
     await access(path.join(target, "docs/cloudflare.md"));
+    await access(path.join(target, "src/components/media/BunnyPlayer.astro"));
+    await access(
+      path.join(target, "src/components/media/BunnyBackground.astro"),
+    );
+    await access(path.join(target, "docs/bunny-video.md"));
+    assert.equal(
+      pkg.dependencies["hls.js"],
+      lock.packages[""].dependencies["hls.js"],
+    );
     assert.match(result.stdout, /docs\/cloudflare\.md/);
     assert.match(
       await readFile(path.join(target, "src/consts.ts"), "utf8"),

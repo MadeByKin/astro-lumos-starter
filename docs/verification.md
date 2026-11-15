@@ -23,3 +23,11 @@ npm 11 reported install-script policy warnings for esbuild, fsevents and workerd
 - Repeat browser checks on the devices and browsers required by the client. This review used headless Chrome and a mobile viewport.
 
 The live npm advisory check was unavailable during this review. Dependency advisory status remains unverified.
+
+## Bunny video update — 15 November 2026
+
+Added the reusable Bunny HLS player and background with Lumos styling, scoped cleanup, motion-aware autoplay and custom accessible controls. The examples have distinct section labels; the player poster/video cover the selected ratio. Removed the previous direct-file `Video` component and its showcase section. Generated-project checks confirm the Bunny components, setup guide and locked HLS dependency are included.
+
+After removal, `npm run check` reported zero diagnostics across 81 files, all 12 unit/scaffold/contact tests passed, and the production build passed. Chrome passed both the shared-runtime browser suite and the dedicated Bunny suite. Earlier Bunny checks also passed in WebKit, and the supplied live Bunny stream played in Chrome. Desktop/mobile screenshots were reviewed. See [Bunny setup and detailed coverage](bunny-video.md).
+
+Vite reports a chunk-size warning for dynamically loaded HLS.js. Physical iPhone fullscreen and installed Stacki UI editing remain untested. No hosting deployment was present under the configured `astro-lumos-starter` Worker name in the connected Cloudflare account at publication preparation.

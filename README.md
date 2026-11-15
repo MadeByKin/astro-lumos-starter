@@ -149,6 +149,7 @@ To show native scrollbars throughout a site, add `data-scrollbars="visible"` to 
 - [Cloudflare accounts, Workers deployment and domains](docs/cloudflare.md)
 - [Client contact forms and email delivery](docs/contact-forms.md)
 - [Astro structure and shared animations](docs/astro-basics.md)
+- [Bunny HLS video components](docs/bunny-video.md)
 - [Motion and cleanup](docs/motion.md)
 - [Page transitions](docs/navigation.md)
 - [Stacki integration](docs/stacki.md)
