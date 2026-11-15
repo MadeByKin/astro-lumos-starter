@@ -20,7 +20,7 @@ let broken = false;
 const context = await browser.newContext({
   viewport: { width: 1280, height: 900 },
 });
-await context.route(`${sample}**`, async (route) => {
+async function servePlaylistFixture(route) {
   const name = new URL(route.request().url()).pathname.split("/").pop();
   requests.push(name);
   if (broken)
@@ -45,7 +45,8 @@ await context.route(`${sample}**`, async (route) => {
       : "video/mp2t",
     headers: { "Access-Control-Allow-Origin": "*" },
   });
-});
+}
+await context.route(`${sample}**`, servePlaylistFixture);
 await context.addInitScript(() => {
   const original = HTMLMediaElement.prototype.play;
   HTMLMediaElement.prototype.play = function () {
@@ -263,15 +264,16 @@ try {
     true,
     "removal releases media",
   );
-  await page.evaluate((sample) => {
+  await context.route(`${base}/local-video/**`, servePlaylistFixture);
+  await page.evaluate(() => {
     const original = document.querySelector("bunny-player");
     const host = original.cloneNode(true);
     const root = host.querySelector("[data-bunny-player-init]");
-    root.dataset.playerSrc = sample + "master.m3u8";
+    root.dataset.playerSrc = "/local-video/master.m3u8";
     root.dataset.playerLazy = "meta";
     root.dataset.playerUpdateSize = "true";
     original.after(host);
-  }, sample);
+  });
   const metadata = page.locator("[data-bunny-player-init]").nth(1);
   await page.waitForFunction(
     () =>

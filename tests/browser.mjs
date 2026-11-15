@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const base = process.env.BASE_URL || "http://127.0.0.1:4322";
+const base = process.env.BASE_URL || "http://127.0.0.1:4323";
 const browser = await chromium.launch({
   headless: true,
   ...(process.env.PLAYWRIGHT_CHANNEL
@@ -444,6 +444,33 @@ try {
     );
   }
 
+  await page.goto(base + "/example-components?modal=modal-small");
+  const linkedDialog = page.locator("#modal-small");
+  await page.waitForFunction(() => !location.search.includes("modal="));
+  assert.equal(
+    await linkedDialog.evaluate((dialog) => dialog.open),
+    true,
+    "A modal deep link stays open after the initial pageshow",
+  );
+  await linkedDialog.evaluate(async (dialog) => {
+    if (!(dialog instanceof HTMLDialogElement))
+      throw new Error("Expected dialog");
+    const closed = new Promise((resolve) =>
+      dialog.addEventListener("close", resolve, { once: true }),
+    );
+    dialog.close();
+    document.querySelector('[data-modal-open="modal-small"]').click();
+    await closed;
+  });
+  assert.equal(
+    await page.evaluate(() => document.documentElement.style.overflow),
+    "hidden",
+    "An immediate reopen retains the dialog's lock",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => document.documentElement.style.overflow !== "hidden",
+  );
   console.log("PASS: desktop motion, cleanup and library navigation");
   // Initial reduced motion, mobile nav and no-JS reading/navigation.
   const reduced = await browser.newContext({

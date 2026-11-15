@@ -32,7 +32,7 @@ export function installOverlays(lifetime: Scope) {
           : undefined);
       if (scroll) scroll.scrollTop = 0;
       modal.showModal();
-      unlock = lockScroll();
+      unlock ??= lockScroll();
       modal.dispatchEvent(new CustomEvent("modal-open", { bubbles: true }));
     };
     modals.set(modal, { open });
@@ -45,6 +45,7 @@ export function installOverlays(lifetime: Scope) {
     modal.addEventListener(
       "close",
       () => {
+        if (modal.open) return;
         release();
         const anotherModalIsOpen = [...modals.keys()].some(
           (other) => other !== modal && other.open,

@@ -47,6 +47,23 @@ try {
   const page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(base + "/contact-test-fixture");
+  const dialog = page.locator("#dialog-form-test");
+  await dialog.evaluate((element) => element.showModal());
+  await dialog.getByRole("button", { name: "Done" }).click();
+  assert.deepEqual(
+    await dialog.evaluate((element) => [element.open, element.returnValue]),
+    [false, "done"],
+    "An endpoint-free dialog form closes with the submitter's value",
+  );
+  await context.route("**/save-draft", (route) =>
+    route.fulfill({ status: 200, body: "saved" }),
+  );
+  const draft = page.locator('form[name="submitter-test"]');
+  const sentDraft = page.waitForRequest(
+    (request) => new URL(request.url()).pathname === "/save-draft",
+  );
+  await draft.getByRole("button", { name: "Save draft" }).click();
+  assert.match((await sentDraft).postData(), /name="intent"\r\n\r\nsave/);
   const search = page.locator('form[name="search-test"]');
   await search.getByRole("textbox").fill("two words");
   await search.getByRole("button").click();

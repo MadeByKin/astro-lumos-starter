@@ -117,6 +117,7 @@ npm exec playwright install chromium
 npm run preview -- --host 127.0.0.1 --port 4323
 # In another terminal:
 BASE_URL=http://127.0.0.1:4323 npm run test:browser
+BASE_URL=http://127.0.0.1:4323 npm run test:bunny-browser
 ```
 
 For development helpers, run `npm run dev -- --background --host 127.0.0.1 --port 4322`, then `BASE_URL=http://127.0.0.1:4322 npm run test:development`. Stop that server with `npm run dev -- stop`.

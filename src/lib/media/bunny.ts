@@ -10,6 +10,7 @@ export type BunnySizing =
       ratio?: never;
     }
   | {
+      /** Aspect ratio. */
       variant: "custom";
       /** CSS `aspect-ratio` value. */
       ratio: string;
@@ -276,7 +277,10 @@ export function setupBunny(
         const first = variants[0];
         let media = text;
         if (first) {
-          const playlist = await fetch(new URL(first[2].trim(), src), options);
+          const playlist = await fetch(
+            new URL(first[2].trim(), response.url),
+            options,
+          );
           if (!playlist.ok) return;
           media = await playlist.text();
         }

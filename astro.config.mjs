@@ -28,5 +28,10 @@ export default defineConfig({
       },
     },
   ],
-  vite: { build: { cssTarget: "safari15.4" } },
+  vite: {
+    build: {
+      cssTarget: "safari15.4",
+      license: { fileName: "licenses/browser-dependencies.md" },
+    },
+  },
 });

@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { BunnySizing, BunnyRatio } from "@/lib/media/bunny";
+import type { BunnySizing } from "@/lib/media/bunny";
 import BunnyButton from "./BunnyButton.astro";
 type Head = Omit<HTMLAttributes<"div">, "src"> & {
   /** Set to `false` to omit the component. */
@@ -21,11 +21,6 @@ type Settings = {
   lazy?: boolean | "meta";
 };
 type Props = Head & BunnySizing & Settings;
-type AllProps = Head &
-  Settings & {
-    variant?: BunnyRatio | "custom" | "auto" | "cover";
-    ratio?: string;
-  };
 const {
   render = true,
   src,
@@ -38,7 +33,7 @@ const {
   lazy = "meta",
   class: className,
   ...rest
-} = Astro.props as AllProps;
+} = Astro.props;
 const aspect =
   variant === "custom"
     ? ratio

@@ -1,11 +1,13 @@
 ---
 interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
   /** Playback control. */
   control: "playpause" | "mute" | "fullscreen";
   /** Accessible label. */
   label: string;
 }
-const { control, label } = Astro.props;
+const { render = true, control, label } = Astro.props;
 const paths = {
   playpause: ["M8 5v14l11-7Z", "M8 5v14M16 5v14"],
   mute: [
@@ -19,27 +21,29 @@ const paths = {
 };
 ---
 
-<button
-  type="button"
-  class="bunny-button_wrap"
-  data-player-control={control}
-  aria-label={label}
->
-  {paths[control].map((path, index) => (
-    <svg
-      data-player-icon={index === 0 ? "primary" : "alternate"}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <path d={path} />
-    </svg>
-  ))}
-</button>
+{render && control && label && (
+  <button
+    type="button"
+    class="bunny-button_wrap"
+    data-player-control={control}
+    aria-label={label}
+  >
+    {paths[control].map((path, index) => (
+      <svg
+        data-player-icon={index === 0 ? "primary" : "alternate"}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d={path} />
+      </svg>
+    ))}
+  </button>
+)}
 <style is:global>
   @layer components {
     .bunny-button_wrap {

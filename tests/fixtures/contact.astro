@@ -27,6 +27,23 @@ import Button from "@/components/Button.astro";
         <Input label="Search term" name="q" />
         <Button type="submit">Search</Button>
       </Form>
+      <dialog id="dialog-form-test">
+        <Form name="dialog-test" method="dialog">
+          <Button type="submit" value="done">
+            Done
+          </Button>
+        </Form>
+      </dialog>
+      <Form name="submitter-test" action="/form-service">
+        <Button
+          type="submit"
+          name="intent"
+          value="save"
+          formaction="/save-draft"
+        >
+          Save draft
+        </Button>
+      </Form>
     </ContentWrapper>
   </Section>
 </Layout>

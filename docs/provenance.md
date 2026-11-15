@@ -6,6 +6,8 @@ The Lumos MIT license is retained in `LICENSE`. Starter additions include the sh
 
 The bundled Inter font ships with its [SIL Open Font License](../public/licenses/inter.txt). Astro copies this notice to `/licenses/inter.txt` in production.
 
+The production build writes the notices for bundled browser dependencies to `/licenses/browser-dependencies.md`, including the versions of Astro, GSAP, HLS.js and Lenis used by the starter.
+
 Implementation references:
 
 - [Lumos documentation](https://lumosframework.com/docs/)

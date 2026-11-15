@@ -86,6 +86,9 @@ export function defineBehaviour(
         this.scope?.dispose();
         this.scope = undefined;
       };
+      private mountIfNeeded = () => {
+        if (!this.scope) this.mount();
+      };
       connectedCallback() {
         if (this.connection) return;
         this.connection = new AbortController();
@@ -99,13 +102,11 @@ export function defineBehaviour(
         document.addEventListener("astro:before-swap", this.unmount, options);
         document.addEventListener(
           "astro:page-load",
-          () => {
-            if (!this.scope) this.mount();
-          },
+          this.mountIfNeeded,
           options,
         );
         window.addEventListener("pagehide", this.unmount, options);
-        window.addEventListener("pageshow", this.mount, options);
+        window.addEventListener("pageshow", this.mountIfNeeded, options);
         this.mount();
       }
       disconnectedCallback() {

@@ -156,8 +156,24 @@ const cloudflare = action === "/api/contact";
     fields.addEventListener(
       "submit",
       async (event) => {
+        const button = event.submitter;
+        const submitter =
+          button instanceof HTMLButtonElement ||
+          button instanceof HTMLInputElement
+            ? button
+            : null;
+        const method =
+          !cloudflare && submitter?.hasAttribute("formmethod")
+            ? submitter.formMethod
+            : fields.method;
+        const endpoint =
+          (!cloudflare && submitter?.getAttribute("formaction")) ||
+          form.dataset.endpoint;
         // Let the browser navigate GET forms and close native dialog forms.
-        if (!cloudflare && form.dataset.endpoint && fields.method !== "post")
+        if (
+          !cloudflare &&
+          (method === "dialog" || (endpoint && method === "get"))
+        )
           return;
         event.preventDefault();
         if (form.dataset.state === "sending") return;
@@ -165,17 +181,22 @@ const cloudflare = action === "/api/contact";
           form.dataset.state = "failed";
           return;
         }
-        if (!fields.checkValidity()) return;
-        const endpoint = form.dataset.endpoint;
+        if (
+          !fields.noValidate &&
+          !submitter?.formNoValidate &&
+          !fields.checkValidity()
+        )
+          return;
         form.dataset.state = "sending";
         fields.setAttribute("aria-busy", "true");
-        if (submit) submit.disabled = true;
         try {
           if (!endpoint) throw new Error("Missing form endpoint");
+          const body = new FormData(fields, submitter);
+          if (submit) submit.disabled = true;
           const answer = await fetch(endpoint, {
-            method: fields.method || "post",
+            method,
             signal: scope.signal,
-            body: new FormData(fields),
+            body,
             headers: { Accept: "application/json" },
           });
           if (!answer.ok) throw new Error(String(answer.status));
