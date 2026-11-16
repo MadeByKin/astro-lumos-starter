@@ -1,6 +1,6 @@
 # Astro Lumos Starter
 
-An Astro starter with Lumos components, Lenis smooth scrolling, GSAP animations, page transitions and Stacki editing support. Includes project instructions and skills for Codex and Claude Code.
+An Astro starter with Lumos components, Alpacka smooth scrolling, GSAP animations, page transitions and Stacki editing support. Includes project instructions and skills for Codex and Claude Code.
 
 ## Start a project
 
@@ -94,7 +94,7 @@ The installer copies the skill to your tool’s user-level skills folder and rec
 ## Included
 
 - Lumos components and page-building skills.
-- Lenis smooth scrolling with a shared GSAP clock and native touch/anchor navigation.
+- Alpacka wheel easing with native touch and anchor navigation. The trial uses Alpacka’s own animation loop alongside the GSAP ticker.
 - Data-attribute animations, scoped cleanup and live reduced-motion support.
 - Astro ClientRouter with fade, slide and disabled-animation options.
 - Accessible dialog/dropdown controls with independent state and scroll locks.

@@ -16,8 +16,8 @@ page.on("console", (message) => consoleLines.push(message.text()));
 page.on("pageerror", (error) => errors.push(error.message));
 try {
   await page.goto(base);
-  await page.waitForFunction(() =>
-    document.documentElement.classList.contains("lenis"),
+  await page.waitForFunction(
+    () => document.documentElement.style.scrollbarGutter === "stable",
   );
   await page.waitForFunction(() => !!window.tick);
   await page.waitForFunction(
@@ -153,7 +153,7 @@ try {
 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForFunction(
-    () => !document.documentElement.classList.contains("lenis"),
+    () => document.documentElement.style.scrollbarGutter !== "stable",
   );
   const paused = await page.evaluate(() => window.__frameCalls);
   await page.evaluate(

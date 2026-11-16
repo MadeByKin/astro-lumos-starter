@@ -6,7 +6,7 @@ Reference: Federico Valla’s [Webflow development setup](https://github.com/val
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | Build, assets and live reload        | Astro/Vite bundle the project and serve its assets.                                                                               |
 | Component discovery and cleanup      | Custom elements use `defineBehaviour` and an instance-owned `Scope`. Shared effects scan explicit data attributes.                |
-| Smooth scrolling and animation clock | One Lenis owner and shared GSAP ticker, with native touch/anchors and tokenized scroll locks.                                     |
+| Smooth scrolling and animation clock | One Alpacka instance and a separate GSAP ticker, with native touch/anchors and tokenized scroll locks.                                     |
 | Frame and resize subscriptions       | `onMotionFrame` shares the GSAP clock; `observeViewport` coalesces resize work.                                                   |
 | Viewport entry                       | Scoped `IntersectionObserver` or GSAP ScrollTrigger.                                                                              |
 | Scroll progress                      | ScrollTrigger `self.progress`, `scrub` and `gsap.utils.mapRange`.                                                                 |

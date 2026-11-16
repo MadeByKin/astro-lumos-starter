@@ -1,62 +1,69 @@
-import Lenis from "lenis";
-import { gsap, ScrollTrigger } from "./gsap";
+import { smooth, type Smooth } from "@alpacka/scroll";
+import { ScrollTrigger } from "./gsap";
 import { observeMotion } from "./policy";
 import type { Scope } from "./scope";
 
-let lenis: Lenis | undefined;
+let scroller: Smooth | undefined;
 let owner: Scope | undefined;
 const locks = new Set<symbol>();
-let originalOverflow = "";
-let originalOverflowPriority = "";
+let restoreOverflow: (() => void) | undefined;
+
+function saveOverflow() {
+  const style = document.documentElement.style;
+  const x = style.getPropertyValue("overflow-x");
+  const y = style.getPropertyValue("overflow-y");
+  const xPriority = style.getPropertyPriority("overflow-x");
+  const yPriority = style.getPropertyPriority("overflow-y");
+  return () => {
+    style.setProperty("overflow-x", x, xPriority);
+    style.setProperty("overflow-y", y, yPriority);
+  };
+}
+
+function applyLock() {
+  scroller?.lock("overlays");
+  document.documentElement.style.setProperty("overflow", "hidden", "important");
+}
 
 /** Pair with scope.defer(lockScroll()). Tokens prevent one overlay unlocking another. */
 export function lockScroll() {
   const token = Symbol("scroll-lock");
   if (locks.size === 0) {
-    originalOverflow =
-      document.documentElement.style.getPropertyValue("overflow");
-    originalOverflowPriority =
-      document.documentElement.style.getPropertyPriority("overflow");
-    document.documentElement.style.setProperty(
-      "overflow",
-      "hidden",
-      "important",
-    );
+    restoreOverflow = saveOverflow();
+    applyLock();
   }
   locks.add(token);
-  lenis?.stop();
   return () => {
     if (!locks.delete(token) || locks.size) return;
-    if (originalOverflow)
-      document.documentElement.style.setProperty(
-        "overflow",
-        originalOverflow,
-        originalOverflowPriority,
-      );
-    else document.documentElement.style.removeProperty("overflow");
-    lenis?.start();
+    scroller?.unlock("overlays");
+    restoreOverflow?.();
+    restoreOverflow = undefined;
   };
 }
 
 export function refreshMotion() {
-  lenis?.resize();
+  scroller?.resize();
   ScrollTrigger.refresh();
 }
 
 export function scrollState() {
-  return { smooth: !!lenis, locks: locks.size };
+  return { smooth: !!scroller, locks: locks.size };
 }
 
-/** Exactly one Lenis instance and one GSAP ticker callback; never a second RAF. */
+/** Alpacka owns the wheel easing clock for the lifetime of this page. */
 export function startScroll(scope: Scope) {
   if (owner) throw new Error("Only one SiteRuntime may own scrolling");
   owner = scope;
-  let removeTicker: (() => void) | undefined;
   const destroy = () => {
-    removeTicker?.();
-    removeTicker = undefined;
-    lenis?.destroy();
-    lenis = undefined;
+    if (!scroller) return;
+    // Alpacka clears inline overflow and restores its initial history mode.
+    // Preserve the current overlay lock, site styles and ClientRouter state.
+    const restore = saveOverflow();
+    const restoration = history.scrollRestoration;
+    scroller.destroy();
+    scroller = undefined;
+    history.scrollRestoration = restoration;
+    restore();
   };
   scope.defer(() => {
     destroy();
@@ -67,19 +74,12 @@ export function startScroll(scope: Scope) {
       destroy();
       return;
     }
-    if (lenis) return;
-    lenis = new Lenis({
-      autoRaf: false,
-      autoResize: true,
-      smoothWheel: true,
-      syncTouch: false,
-      anchors: false,
-    });
-    lenis.on("scroll", ScrollTrigger.update);
-    const tick = (seconds: number) => lenis?.raf(seconds * 1000);
-    gsap.ticker.add(tick);
-    removeTicker = () => gsap.ticker.remove(tick);
-    if (locks.size) lenis.stop();
+    if (scroller) return;
+    const restoration = history.scrollRestoration;
+    scroller = smooth();
+    history.scrollRestoration = restoration;
+    scroller.on("scroll", () => ScrollTrigger.update());
+    if (locks.size) applyLock();
   });
   let frame = 0;
   const queueRefresh = () => {

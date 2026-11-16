@@ -67,7 +67,7 @@ Replace `/about` and the motion description as needed. Custom transition values 
 - The shared processed script is `src/scripts/site.ts`. Module scripts execute once per document, so it installs stable document-level lifecycle listeners.
 - `src/scripts/reveals.ts` scans only `[data-reveal]`; no effect is enabled by an `h1` or other semantic tag. It disposes outgoing contexts before the swap and binds incoming targets after the swap/page load. DOM insertion/removal and Studio morphs are supported too.
 - Component-owned controls use custom elements. `defineBehaviour` disposes scopes on `astro:before-swap`, disconnect and pagehide; incoming elements initialize on connection, with `astro:page-load` filling any unmounted scope. No double mounting of an already active scope.
-- SiteRuntime releases the outgoing Lenis owner before replacement, then initializes one owner for the new page. Page-load refresh updates geometry without forcing scroll to the top; ClientRouter owns history/anchor restoration.
+- SiteRuntime releases the outgoing Alpacka instance before replacement, then initializes one owner for the new page. Page-load refresh updates geometry without forcing scroll to the top; ClientRouter owns history/anchor restoration.
 - Layout's SiteRuntime is not persisted across swaps. Persisting a custom component requires an explicit state/cleanup review rather than assuming disconnect will run.
 
 Browser tests exercise same-document navigation, repeated home/component-library round trips, observer counts, controls after navigation, anchors/history, reduced motion and no-JavaScript fallback. Actual installed Studio acceptance remains a separate check.

@@ -47,7 +47,7 @@ export function installDiagnostics(scope: Scope) {
     const render = () => {
       if (!panel) return;
       const state = scrollState();
-      panel.textContent = `ASTRO LUMOS · DEVELOPMENT\nMotion ${allowed ? "on" : "paused"} · Lenis ${state.smooth ? "on" : "off"}\n${viewport.width} × ${viewport.height} · locks ${state.locks}\nGSAP clock ${fps === undefined ? "—" : Math.round(fps)} fps\nShift+F to close · not a Lighthouse score`;
+      panel.textContent = `ASTRO LUMOS · DEVELOPMENT\nMotion ${allowed ? "on" : "paused"} · Alpacka ${state.smooth ? "on" : "off"}\n${viewport.width} × ${viewport.height} · locks ${state.locks}\nGSAP clock ${fps === undefined ? "—" : Math.round(fps)} fps\nShift+F to close · not a Lighthouse score`;
     };
     observeMotion(panelScope, (value) => {
       allowed = value;

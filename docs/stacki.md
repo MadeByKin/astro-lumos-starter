@@ -35,7 +35,7 @@ A trusted integration can also pause decorative motion with `document.documentEl
 
 When creating a page with **BaseLayout**, check the Navigator hierarchy after inserting the first component. In Stacki 1.4.3, double-clicking Heading in the Components panel on an empty page inserted it after the closing `</BaseLayout>` tag, which placed it below the footer. Nest the page's Section and ContentWrapper inside BaseLayout in the route file, as in `src/pages/index.astro`. Stacki picks up the source edit and displays the heading inside the page content.
 
-1. Switch between design and interactive modes. Confirm reveals rest in place, autoplay pauses and Lenis stops in design mode.
+1. Switch between design and interactive modes. Confirm reveals rest in place, autoplay pauses and Alpacka stops in design mode.
 2. Edit reveal attributes and the home page Heading text. Confirm changes save to the intended source.
 3. Insert, duplicate and remove animated elements and controls. Confirm instances work independently and deleting an open modal releases its scroll lock.
 4. Edit component content and switch preview modes repeatedly. Confirm behavior reinitializes and design-mode styles reset.

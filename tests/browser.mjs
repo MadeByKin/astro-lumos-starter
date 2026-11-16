@@ -53,7 +53,8 @@ const page = await context.newPage();
 const smooth = (value = true, target = page) =>
   target.waitForFunction(
     (expected) =>
-      document.documentElement.classList.contains("lenis") === expected,
+      (document.documentElement.style.scrollbarGutter === "stable") ===
+      expected,
     value,
   );
 try {
@@ -172,6 +173,10 @@ try {
     true,
     "ClientRouter preserves the document",
   );
+  await page.mouse.move(300, 350);
+  await page.mouse.wheel(0, 400);
+  await page.waitForFunction(() => scrollY > 0 && scrollY < 399);
+  await page.waitForFunction(() => Math.abs(scrollY - 400) <= 1);
   // Navigate from a scrolled position without Playwright scrolling the link into view.
   await page.evaluate(() => {
     window.scrollTo({ top: 600, behavior: "instant" });
@@ -332,6 +337,13 @@ try {
   );
   await smooth();
   const modalTrigger = page.locator('[data-modal-open="modal-small"]');
+  await page.evaluate(() => {
+    document.documentElement.style.setProperty(
+      "overflow-y",
+      "auto",
+      "important",
+    );
+  });
   await modalTrigger.click();
   assert.equal(
     await page.locator("#modal-small").evaluate((el) => el.open),
@@ -341,9 +353,45 @@ try {
     await page.evaluate(() => document.documentElement.style.overflow),
     "hidden",
   );
+  const panel = page.locator("#modal-small [data-modal-scroll]");
+  await panel.evaluate((el) => {
+    el.style.maxHeight = "8rem";
+    el.style.overflowY = "auto";
+  });
+  await panel.hover();
+  const lockedPosition = await page.evaluate(() => scrollY);
+  await page.mouse.wheel(0, 240);
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#modal-small [data-modal-scroll]").scrollTop > 0,
+  );
+  assert.equal(await page.evaluate(() => scrollY), lockedPosition);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await smooth(false);
+  assert.equal(
+    await page.evaluate(() => document.documentElement.style.overflow),
+    "hidden",
+  );
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await smooth();
+  await panel.evaluate((el) => el.removeAttribute("style"));
   await page.keyboard.press("Escape");
   await page.waitForFunction(
     () => document.documentElement.style.overflow !== "hidden",
+  );
+  assert.deepEqual(
+    await page.evaluate(() => {
+      const style = document.documentElement.style;
+      return [
+        style.overflowX,
+        style.overflowY,
+        style.getPropertyPriority("overflow-y"),
+      ];
+    }),
+    ["", "auto", "important"],
+  );
+  await page.evaluate(() =>
+    document.documentElement.style.removeProperty("overflow-y"),
   );
   assert.equal(
     await modalTrigger.evaluate((el) => el === document.activeElement),

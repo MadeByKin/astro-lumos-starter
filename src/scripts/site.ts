@@ -1,4 +1,3 @@
-import "lenis/dist/lenis.css";
 import { defineBehaviour, Scope } from "@/lib/motion/scope";
 import { connectStudio } from "@/lib/motion/studio";
 import { startScroll } from "@/lib/motion/scroll";

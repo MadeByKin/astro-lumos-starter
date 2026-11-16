@@ -1,6 +1,6 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
-// Lenis and animation use the same elapsed-time clock, per Lenis integration guidance.
+// Keep the starter's existing timing for GSAP animations.
 gsap.ticker.lagSmoothing(0);
 export { gsap, ScrollTrigger };
