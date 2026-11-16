@@ -40,6 +40,7 @@ any scripts they need.
 - `lumos-scaling-graphic` — build an editable graphic that scales as one piece.
 - `lumos-import-webflow` — migrate a Webflow export and connect its CMS.
 - `lumos-upgrade-version` — upgrade Lumos without losing customizations.
+- `sticky` — ease native sticky elements in and out using the bundled implementation.
 
 `AGENTS.md` holds the shared rules; `CLAUDE.md` imports it for Claude Code. `.agents/skills/` is the source of truth. Claude Code loads the same skills from
 relative symlinks in `.claude/skills/`. For each new skill, add
