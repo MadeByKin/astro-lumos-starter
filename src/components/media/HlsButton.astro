@@ -24,7 +24,7 @@ const paths = {
 {render && control && label && (
   <button
     type="button"
-    class="bunny-button_wrap"
+    class="hls-button_wrap"
     data-player-control={control}
     aria-label={label}
   >
@@ -46,7 +46,7 @@ const paths = {
 )}
 <style is:global>
   @layer components {
-    .bunny-button_wrap {
+    .hls-button_wrap {
       display: grid;
       place-items: center;
       flex: 0 0 auto;
@@ -88,7 +88,7 @@ const paths = {
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .bunny-button_wrap {
+      .hls-button_wrap {
         transition: none;
       }
     }

@@ -1,7 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { BunnySizing } from "@/lib/media/bunny";
-import BunnyButton from "./BunnyButton.astro";
+import type { HlsSizing } from "@/lib/media/hls";
+import HlsButton from "./HlsButton.astro";
 type Head = Omit<HTMLAttributes<"div">, "src"> & {
   /** Set to `false` to omit the component. */
   render?: boolean;
@@ -20,7 +20,7 @@ type Settings = {
   /** Defer loading until play, preload metadata only, or attach immediately. */
   lazy?: boolean | "meta";
 };
-type Props = Head & BunnySizing & Settings;
+type Props = Head & HlsSizing & Settings;
 const {
   render = true,
   src,
@@ -43,14 +43,14 @@ const aspect =
 ---
 
 {render && src && (
-  <bunny-player style="display: contents">
+  <hls-player style="display: contents">
     <div
       {...rest}
-      class:list={["bunny-player_wrap", variant, className]}
+      class:list={["hls-player_wrap", variant, className]}
       style={`aspect-ratio: ${aspect};`}
       role="group"
       aria-label={label}
-      data-bunny-player-init
+      data-hls-player-init
       data-player-src={src}
       data-player-autoplay={String(autoplay)}
       data-player-muted={String(muted || autoplay)}
@@ -66,7 +66,7 @@ const aspect =
     >
       <div data-player-before></div>
       <video
-        class="bunny-player_video"
+        class="hls-player_video"
         poster={poster}
         preload="none"
         playsinline
@@ -76,7 +76,7 @@ const aspect =
       </video>
       <button
         type="button"
-        class="bunny-player_start"
+        class="hls-player_start"
         data-player-control="play"
         aria-label="Play video"
       >
@@ -84,18 +84,18 @@ const aspect =
           <path d="M8 5v14l11-7Z" fill="currentColor" />
         </svg>
       </button>
-      <div class="bunny-player_interface">
-        <BunnyButton control="playpause" label="Play video" />
-        <div class="bunny-player_time">
+      <div class="hls-player_interface">
+        <HlsButton control="playpause" label="Play video" />
+        <div class="hls-player_time">
           <span data-player-time-progress>00:00</span>
           <span aria-hidden="true"> / </span>
           <span data-player-time-duration>00:00</span>
         </div>
-        <div class="bunny-player_timeline" data-player-timeline>
-          <div class="bunny-player_buffered" data-player-buffered></div>
-          <div class="bunny-player_progress" data-player-progress></div>
+        <div class="hls-player_timeline" data-player-timeline>
+          <div class="hls-player_buffered" data-player-buffered></div>
+          <div class="hls-player_progress" data-player-progress></div>
           <input
-            class="bunny-player_seek"
+            class="hls-player_seek"
             data-player-timeline-handle
             type="range"
             min="0"
@@ -107,33 +107,33 @@ const aspect =
             disabled
           />
         </div>
-        <BunnyButton control="mute" label="Mute video" />
-        <BunnyButton control="fullscreen" label="Enter fullscreen" />
+        <HlsButton control="mute" label="Mute video" />
+        <HlsButton control="fullscreen" label="Enter fullscreen" />
       </div>
-      <span class="bunny-player_loading" role="status">
+      <span class="hls-player_loading" role="status">
         Loading video…
       </span>
-      <div class="bunny-player_error" role="status">
+      <div class="hls-player_error" role="status">
         <span>Video unavailable.</span>
         <button type="button" data-player-control="retry">
           Retry video
         </button>
       </div>
       <noscript>
-        <a class="bunny-player_fallback" href={src}>
+        <a class="hls-player_fallback" href={src}>
           Open video
         </a>
       </noscript>
     </div>
-  </bunny-player>
+  </hls-player>
 )}
 <script>
   import { defineBehaviour } from "@/lib/motion/scope";
-  import { formatTime, setupBunny } from "@/lib/media/bunny";
-  defineBehaviour("bunny-player", (element, scope) => {
-    const root = element.querySelector<HTMLElement>("[data-bunny-player-init]");
+  import { formatTime, setupHls } from "@/lib/media/hls";
+  defineBehaviour("hls-player", (element, scope) => {
+    const root = element.querySelector<HTMLElement>("[data-hls-player-init]");
     if (!root) return;
-    const { video, play, wake } = setupBunny(root, scope);
+    const { video, play, wake } = setupHls(root, scope);
     const seek = root.querySelector<HTMLInputElement>(
       "[data-player-timeline-handle]",
     )!;
@@ -265,7 +265,7 @@ const aspect =
 </script>
 <style is:global>
   @layer components {
-    .bunny-player_wrap {
+    .hls-player_wrap {
       position: relative;
       isolation: isolate;
       width: 100%;
@@ -284,17 +284,17 @@ const aspect =
         height: 100%;
       }
     }
-    .bunny-player_video {
+    .hls-player_video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .bunny-player_wrap:fullscreen .bunny-player_video {
+    .hls-player_wrap:fullscreen .hls-player_video {
       object-fit: contain;
     }
-    .bunny-player_start {
+    .hls-player_start {
       display: none;
       position: absolute;
       inset: 0;
@@ -311,7 +311,7 @@ const aspect =
         height: 100%;
       }
     }
-    .bunny-player_interface {
+    .hls-player_interface {
       display: none;
       position: absolute;
       inset: auto 0 0;
@@ -328,12 +328,12 @@ const aspect =
         grid-template-columns: auto auto minmax(3rem, 1fr) auto auto;
       }
     }
-    .bunny-player_time {
+    .hls-player_time {
       font-size: 0.75rem;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-    .bunny-player_timeline {
+    .hls-player_timeline {
       grid-column: 1 / -1;
       grid-row: 1;
       min-width: 0;
@@ -343,9 +343,9 @@ const aspect =
       height: 1.5rem;
       position: relative;
     }
-    .bunny-player_timeline::before,
-    .bunny-player_buffered,
-    .bunny-player_progress {
+    .hls-player_timeline::before,
+    .hls-player_buffered,
+    .hls-player_progress {
       position: absolute;
       inset: 0 auto 0 0;
       margin-block: auto;
@@ -353,20 +353,20 @@ const aspect =
       border-radius: var(--radius-round);
       pointer-events: none;
     }
-    .bunny-player_timeline::before {
+    .hls-player_timeline::before {
       content: "";
       width: 100%;
       background: var(--dark-700);
     }
-    .bunny-player_buffered {
+    .hls-player_buffered {
       width: 0;
       background: var(--light-300);
     }
-    .bunny-player_progress {
+    .hls-player_progress {
       width: 0;
       background: var(--brand-500);
     }
-    .bunny-player_seek {
+    .hls-player_seek {
       appearance: none;
       position: absolute;
       inset: 0;
@@ -391,13 +391,13 @@ const aspect =
         background: var(--brand-500);
       }
     }
-    .bunny-player_start:focus-visible,
-    .bunny-player_seek:focus-visible {
+    .hls-player_start:focus-visible,
+    .hls-player_seek:focus-visible {
       outline: var(--focus-width) solid var(--brand-500);
       outline-offset: var(--focus-offset);
     }
-    .bunny-player_loading,
-    .bunny-player_error {
+    .hls-player_loading,
+    .hls-player_error {
       display: none;
       position: absolute;
       inset: 0 0 4rem;
@@ -407,39 +407,39 @@ const aspect =
       pointer-events: none;
       background: color-mix(in srgb, var(--dark-900) 70%, transparent);
     }
-    .bunny-player_error button {
+    .hls-player_error button {
       pointer-events: auto;
       text-decoration: underline;
       cursor: pointer;
     }
-    .bunny-player_fallback {
+    .hls-player_fallback {
       position: absolute;
       inset: auto auto var(--space-4) var(--space-4);
     }
-    .bunny-player_wrap[data-player-enhanced] {
-      .bunny-player_interface {
+    .hls-player_wrap[data-player-enhanced] {
+      .hls-player_interface {
         display: grid;
       }
       &:not([data-player-activated="true"]):not(
           [data-player-status="loading"]
         ):not([data-player-status="error"])
-        .bunny-player_start {
+        .hls-player_start {
         display: block;
       }
       &[data-player-status="playing"][data-player-hover="idle"]:not(
           :focus-within
         ):not([data-timeline-drag="true"])
-        .bunny-player_interface {
+        .hls-player_interface {
         opacity: 0;
         pointer-events: none;
       }
-      &[data-player-status="loading"] .bunny-player_loading,
-      &[data-player-status="error"] .bunny-player_error {
+      &[data-player-status="loading"] .hls-player_loading,
+      &[data-player-status="error"] .hls-player_error {
         display: grid;
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .bunny-player_interface {
+      .hls-player_interface {
         transition: none;
       }
     }

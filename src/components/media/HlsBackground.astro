@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import BunnyButton from "./BunnyButton.astro";
+import HlsButton from "./HlsButton.astro";
 interface Props extends Omit<HTMLAttributes<"div">, "src"> {
   /** Set to `false` to omit the component. */
   render?: boolean;
@@ -31,13 +31,13 @@ const {
 ---
 
 {render && src && (
-  <bunny-background style="display: contents">
+  <hls-background style="display: contents">
     <div
       {...rest}
-      class:list={["bunny-background_wrap", className]}
+      class:list={["hls-background_wrap", className]}
       role="group"
       aria-label={label}
-      data-bunny-background-init
+      data-hls-background-init
       data-player-src={src}
       data-player-autoplay={String(autoplay)}
       data-player-lazy={String(lazy)}
@@ -46,7 +46,7 @@ const {
       data-player-activated="false"
     >
       <video
-        class="bunny-background_video"
+        class="hls-background_video"
         poster={poster}
         preload="none"
         playsinline
@@ -54,40 +54,40 @@ const {
         aria-hidden="true"
       />
       {controls && (
-        <div class="bunny-background_controls">
-          <BunnyButton control="playpause" label="Play video" />
+        <div class="hls-background_controls">
+          <HlsButton control="playpause" label="Play video" />
         </div>
       )}
-      <span class="bunny-background_loading" role="status">
+      <span class="hls-background_loading" role="status">
         Loading video…
       </span>
-      <div class="bunny-background_error" role="status">
+      <div class="hls-background_error" role="status">
         <span>Video unavailable.</span>
         <button type="button" data-player-control="retry">
           Retry video
         </button>
       </div>
       <noscript>
-        <a class="bunny-background_fallback" href={src}>
+        <a class="hls-background_fallback" href={src}>
           Open video
         </a>
       </noscript>
     </div>
-  </bunny-background>
+  </hls-background>
 )}
 <script>
   import { defineBehaviour } from "@/lib/motion/scope";
-  import { setupBunny } from "@/lib/media/bunny";
-  defineBehaviour("bunny-background", (element, scope) => {
+  import { setupHls } from "@/lib/media/hls";
+  defineBehaviour("hls-background", (element, scope) => {
     const root = element.querySelector<HTMLElement>(
-      "[data-bunny-background-init]",
+      "[data-hls-background-init]",
     );
-    if (root) setupBunny(root, scope, true);
+    if (root) setupHls(root, scope, true);
   });
 </script>
 <style is:global>
   @layer components {
-    .bunny-background_wrap {
+    .hls-background_wrap {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -99,20 +99,20 @@ const {
       color: var(--light-100);
       pointer-events: none;
     }
-    .bunny-background_video {
+    .hls-background_video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .bunny-background_controls {
+    .hls-background_controls {
       display: none;
       position: absolute;
       inset-inline-end: var(--space-4);
       bottom: var(--space-4);
       pointer-events: auto;
     }
-    .bunny-background_loading,
-    .bunny-background_error {
+    .hls-background_loading,
+    .hls-background_error {
       display: none;
       position: absolute;
       inset: 0;
@@ -121,22 +121,21 @@ const {
       gap: var(--space-3);
       background: color-mix(in srgb, var(--dark-900) 70%, transparent);
     }
-    .bunny-background_error button {
+    .hls-background_error button {
       pointer-events: auto;
       text-decoration: underline;
       cursor: pointer;
     }
-    .bunny-background_fallback {
+    .hls-background_fallback {
       position: absolute;
       inset: auto auto var(--space-4) var(--space-4);
       pointer-events: auto;
     }
-    .bunny-background_wrap[data-player-enhanced] .bunny-background_controls {
+    .hls-background_wrap[data-player-enhanced] .hls-background_controls {
       display: block;
     }
-    .bunny-background_wrap[data-player-status="loading"]
-      .bunny-background_loading,
-    .bunny-background_wrap[data-player-status="error"] .bunny-background_error {
+    .hls-background_wrap[data-player-status="loading"] .hls-background_loading,
+    .hls-background_wrap[data-player-status="error"] .hls-background_error {
       display: grid;
     }
   }

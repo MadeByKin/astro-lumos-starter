@@ -28,7 +28,7 @@ The 14 November review did not include a live dependency advisory comparison.
 
 Added the reusable Bunny HLS player and background with Lumos styling, scoped cleanup, motion-aware autoplay and custom accessible controls. The examples have distinct section labels; the player poster/video cover the selected ratio. Removed the previous direct-file `Video` component and its showcase section. Generated-project checks confirm the Bunny components, setup guide and locked HLS dependency are included.
 
-After removal, `npm run check` reported zero diagnostics across 81 files, all 12 unit/scaffold/contact tests passed, and the production build passed. Chrome passed both the shared-runtime browser suite and the dedicated Bunny suite. Earlier Bunny checks also passed in WebKit, and the supplied live Bunny stream played in Chrome. Desktop/mobile screenshots were reviewed. See [Bunny setup and detailed coverage](bunny-video.md).
+After removal, `npm run check` reported zero diagnostics across 81 files, all 12 unit/scaffold/contact tests passed, and the production build passed. Chrome passed both the shared-runtime browser suite and the dedicated Bunny suite. Earlier Bunny checks also passed in WebKit, and the supplied live Bunny stream played in Chrome. Desktop/mobile screenshots were reviewed. See [Bunny setup and detailed coverage](hls-video.md).
 
 Vite reported a chunk-size warning for dynamically loaded HLS.js. The Bunny update did not test physical iPhone fullscreen or installed Stacki editing. No hosting deployment was present under the configured `astro-lumos-starter` Worker name in the connected Cloudflare account at publication preparation.
 

@@ -17,4 +17,4 @@ Implementation references:
 - [Astro transitions](https://docs.astro.build/en/guides/view-transitions/)
 - [Federico Valla’s Webflow setup](https://github.com/vallafederico/webflow-dev-setup), an architectural reference. See the [capability comparison and recipes](federico-comparison.md).
 
-The Bunny components adapt the two user-supplied Osmo Supply resources, “Bunny HLS Background Video” and “Custom Bunny HLS Player (Advanced)”. Their source-resource license is separate from the inherited Lumos MIT license; retain the applicable Osmo usage rights when reusing these adaptations. HLS.js is an Apache-2.0 dependency. The showcase stream and poster are external sample assets from those resources, not bundled client assets.
+The HLS components adapt the two user-supplied Osmo Supply resources, “Bunny HLS Background Video” and “Custom Bunny HLS Player (Advanced)”. Their source-resource license is separate from the inherited Lumos MIT license; retain the applicable Osmo usage rights when reusing these adaptations. HLS.js is an Apache-2.0 dependency. The showcase stream and poster are external sample assets from those resources, not bundled client assets.

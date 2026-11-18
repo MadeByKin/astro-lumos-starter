@@ -22,7 +22,7 @@
     "skills:install": "node scripts/install-skill.mjs",
     "updates:check": "node scripts/check-lumos.mjs",
     "test:development": "node tests/development.mjs",
-    "test:bunny-browser": "node tests/bunny-browser.mjs"
+    "test:hls-browser": "node tests/hls-browser.mjs"
   },
   "dependencies": {
     "@alpacka/scroll": "0.4.0",

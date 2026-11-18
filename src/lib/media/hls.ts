@@ -2,11 +2,11 @@ import type Hls from "hls.js";
 import type { Scope } from "@/lib/motion/scope";
 import { observeMotion } from "@/lib/motion/policy";
 
-export type BunnyRatio = "2-1" | "16-9" | "3-2" | "5-4" | "1-1" | "4-5" | "2-3";
-export type BunnySizing =
+export type HlsRatio = "2-1" | "16-9" | "3-2" | "5-4" | "1-1" | "4-5" | "2-3";
+export type HlsSizing =
   | {
       /** Aspect ratio. */
-      variant?: BunnyRatio | "auto" | "cover";
+      variant?: HlsRatio | "auto" | "cover";
       ratio?: never;
     }
   | {
@@ -23,11 +23,7 @@ const loadHls = () =>
     throw error;
   }));
 
-export function setupBunny(
-  root: HTMLElement,
-  scope: Scope,
-  background = false,
-) {
+export function setupHls(root: HTMLElement, scope: Scope, background = false) {
   const video = root.querySelector("video")!;
   const src = root.dataset.playerSrc!;
   const autoplay = root.dataset.playerAutoplay === "true";

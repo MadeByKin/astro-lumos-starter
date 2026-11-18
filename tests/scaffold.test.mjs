@@ -68,11 +68,9 @@ test("scaffolding copies a clean project and refuses existing or recursive desti
       },
     );
 
-    await access(path.join(target, "src/components/media/BunnyPlayer.astro"));
-    await access(
-      path.join(target, "src/components/media/BunnyBackground.astro"),
-    );
-    await access(path.join(target, "docs/bunny-video.md"));
+    await access(path.join(target, "src/components/media/HlsPlayer.astro"));
+    await access(path.join(target, "src/components/media/HlsBackground.astro"));
+    await access(path.join(target, "docs/hls-video.md"));
     assert.equal(
       pkg.dependencies["hls.js"],
       lock.packages[""].dependencies["hls.js"],

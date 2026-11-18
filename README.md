@@ -117,7 +117,7 @@ npm exec playwright install chromium
 npm run preview -- --host 127.0.0.1 --port 4323
 # In another terminal:
 BASE_URL=http://127.0.0.1:4323 npm run test:browser
-BASE_URL=http://127.0.0.1:4323 npm run test:bunny-browser
+BASE_URL=http://127.0.0.1:4323 npm run test:hls-browser
 ```
 
 For development helpers, run `npm run dev -- --background --host 127.0.0.1 --port 4322`, then `BASE_URL=http://127.0.0.1:4322 npm run test:development`. Stop that server with `npm run dev -- stop`.
@@ -150,7 +150,7 @@ To show native scrollbars throughout a site, add `data-scrollbars="visible"` to 
 - [Cloudflare accounts, Workers deployment and domains](docs/cloudflare.md)
 - [Client contact forms and email delivery](docs/contact-forms.md)
 - [Astro structure and shared animations](docs/astro-basics.md)
-- [Bunny HLS video components](docs/bunny-video.md)
+- [HLS video components](docs/hls-video.md)
 - [Motion and cleanup](docs/motion.md)
 - [Page transitions](docs/navigation.md)
 - [Stacki integration](docs/stacki.md)
